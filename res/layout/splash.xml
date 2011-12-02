@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:weightSum="1">
+    <RelativeLayout android:id="@+id/relativeLayout1" android:layout_width="fill_parent" android:layout_weight="0.38" android:layout_height="fill_parent" android:background="#ffffff">
+        <ImageView android:id="@+id/imageView1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:src="@drawable/beautiful_corner_tl" android:layout_alignParentTop="true" android:layout_alignParentLeft="true"></ImageView>
+        <ImageView android:id="@+id/imageView2" android:layout_height="wrap_content" android:layout_width="wrap_content" android:src="@drawable/beautiful_corner_tr" android:layout_alignParentTop="true" android:layout_alignParentRight="true"></ImageView>
+        <ImageView android:id="@+id/imageView3" android:layout_height="wrap_content" android:layout_width="wrap_content" android:src="@drawable/beautiful_corner_bl" android:layout_alignParentBottom="true" android:layout_alignParentLeft="true"></ImageView>
+        <ImageView android:id="@+id/imageView4" android:layout_height="wrap_content" android:layout_width="wrap_content" android:src="@drawable/beautiful_corner_br" android:layout_alignParentBottom="true" android:layout_alignParentRight="true"></ImageView>
+        <ImageView android:id="@+id/imageView5" android:layout_height="wrap_content" android:layout_width="wrap_content" android:src="@drawable/archfriend_heart" android:layout_above="@+id/imageView3" android:layout_centerHorizontal="true" android:layout_marginBottom="116dp"></ImageView>
+        <ImageView android:id="@+id/imageView6" android:layout_height="wrap_content" android:layout_width="wrap_content" android:src="@drawable/archfriend_logo" android:layout_below="@+id/imageView1" android:layout_centerHorizontal="true" android:layout_marginTop="86dp"></ImageView>
+    </RelativeLayout>
+</LinearLayout>

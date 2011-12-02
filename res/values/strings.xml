@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ArchFriend</string>
+    <string name="title">ArchFriend</string>
+    <string name="archlinux">Arch Linux</string>
+    <string name="news">News</string>
+    <string name="web_button">Web</string>
+    <string name="json_button">JSON</string>
+    <string name="maintainer">Maintainer</string>
+    <string name="heart">&lt;3</string>
+    <string name="testbtn">Test</string>
+    <string name="archfriend">Arch Friend</string>
+</resources>
