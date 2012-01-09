@@ -185,14 +185,28 @@ public class ArchFriendSplashActivity extends Activity {
 			String item = source.split("description")[3].split("description")[0];
 			// Remove the first and two last characters
 			item = item.substring(1, item.length() - 2);
+			// Change &lt; into <
+			item = item.replaceAll("&lt;", "<");
+			// Change &gt; into >
+			item = item.replaceAll("&gt;", ">");
 			// Change <p> into nothing
-			item = item.replaceAll("&lt;p&gt;", "");
+			item = item.replaceAll("<p>", "");
 			// Change </p> into a newline
-			item = item.replaceAll("&lt;/p&gt;", "\n");
+			item = item.replaceAll("</p>", "\n");
 			// Change <b> into ***
-			item = item.replaceAll("&lt;b&gt;", "*** ");
+			item = item.replaceAll("<b>", "*** ");
 			// Change </b> into ***
-			item = item.replaceAll("&lt;/b&gt;", " ***");
+			item = item.replaceAll("</b>", " ***");
+			// Change <code> into "
+			item = item.replaceAll("<code>", "\"");
+			// Change </code> into "
+			item = item.replaceAll("</code>", "\"");
+			// Change <a href=" into \n[
+			item = item.replaceAll("<a href=\"", "\n[ ");
+			// Change "> into ]\n
+			item = item.replaceAll("\">", " ]\n");
+			// Change </a> into nothing
+			item = item.replaceAll("</a>", "");
 
 			String outputText = "Latest news item:\n" + item;
 			return outputText;
