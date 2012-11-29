@@ -27,14 +27,8 @@
 
 package com.xyproto.archfriend;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,225 +39,121 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.xyproto.archfriend.model.Maintainer;
+
 
 public class ArchFriendSplashActivity extends Activity {
 
-	private boolean spinnerCanChangeStuffYet;
+  private boolean spinnerCanChangeStuffYet;
+  private WebContents wc;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.splash);
-	}
+  public ArchFriendSplashActivity() {
+    super();
+    wc = new WebContents();
+    spinnerCanChangeStuffYet = false;
+  }
 
-	@Override
-	public void onStart() {
-		spinnerCanChangeStuffYet = false;
-		super.onStart();
-		// Wait 0.5 sec then close splash screen (replace view context)
-		Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			public void run() {
-				setContentView(R.layout.archoverview);
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    requestWindowFeature(Window.FEATURE_NO_TITLE);
+    setContentView(R.layout.splash);
+  }
 
-				try {
-					populateSpinner();
-					populateNews();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					e.printStackTrace();
-				}
+  @Override
+  public void onStart() {
+    super.onStart();
+    // Wait 0.5 sec then close splash screen (replace view context)
+    Handler handler = new Handler();
+    handler.postDelayed(new Runnable() {
+      public void run() {
+        setContentView(R.layout.archoverview);
 
-				TextView tv = (TextView) findViewById(R.id.txtArchNews);
-				tv.setMovementMethod(new ScrollingMovementMethod());
-			}
-		}, 500);
-	}
+        try {
+          populateSpinner();
+          populateNews();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        } catch (ExecutionException e) {
+          e.printStackTrace();
+        }
 
-	private String getNewsText() throws InterruptedException,
-			ExecutionException {
-		String source = new HTTPTask().execute(
-				"https://www.archlinux.org/feeds/news/").get();
+        TextView tv = (TextView)findViewById(R.id.txtArchNews);
+        tv.setMovementMethod(new ScrollingMovementMethod());
+      }
+    }, 500);
+  }
 
-		if (source.length() != 0) {
-			// Get the relevant block of html text
-			String item = source.split("description")[3].split("description")[0];
-			// Remove the first and two last characters
-			item = item.substring(1, item.length() - 2);
-			// Change &lt; into <
-			item = item.replaceAll("&lt;", "<");
-			// Change &gt; into >
-			item = item.replaceAll("&gt;", ">");
-			// Change <p> into nothing
-			item = item.replaceAll("<p>", "");
-			// Change </p> into a newline
-			item = item.replaceAll("</p>", "\n");
-			// Change <b> into ***
-			item = item.replaceAll("<b>", "*** ");
-			// Change </b> into ***
-			item = item.replaceAll("</b>", " ***");
-			// Change <code> into "
-			item = item.replaceAll("<code>", "\"");
-			// Change </code> into "
-			item = item.replaceAll("</code>", "\"");
-			// Change <a href=" into \n[
-			item = item.replaceAll("<a href=\"", "\n[ ");
-			// Change "> into ]\n
-			item = item.replaceAll("\">", " ]\n");
-			// Change </a> into nothing
-			item = item.replaceAll("</a>", "");
-			// Lists
-			item = item.replaceAll("<li>", "* \n");
-			item = item.replaceAll("</li>", "");
-			item = item.replaceAll("<ol>", "");
-			item = item.replaceAll("</ol>", "");
-			item = item.replaceAll("<ul>", "");
-			item = item.replaceAll("</ul>", "");
-			// Italic
-			item = item.replaceAll("<i>", "_");
-			item = item.replaceAll("</i>", "_");
+  private void populateSpinner() throws InterruptedException, ExecutionException {
+    Spinner spinner = (Spinner)findViewById(R.id.lstMaintainers);
 
-			String outputText = "Latest news:\n\n" + item;
-			return outputText;
-		}
+    List<Maintainer> maintainers = wc.getMaintainersColonSep();
 
-		return "Received no data from web";
-	}
+    if (!maintainers.isEmpty()) {
+      ArrayAdapter<Maintainer> adapter = new ArrayAdapter<Maintainer>(this, android.R.layout.simple_spinner_item, maintainers);
+      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+      spinner.setAdapter(adapter);
 
-	/*
-	 * Return a colon separated list of maintainer usernames as a string
-	 */
-	private List<Maintainer> getMaintainersColonSep()
-			throws InterruptedException, ExecutionException {
-		List<Maintainer> maintainers = new ArrayList<Maintainer>();
-		String source = new HTTPTask().execute(
-				"https://www.archlinux.org/packages/?limit=1").get();
+      spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        @SuppressWarnings("rawtypes")
+        @Override
+        public void onItemSelected(AdapterView adapter, View v, int i, long lng) {
+          TextView tv = (TextView)findViewById(R.id.txtArchNews);
+          Maintainer maintainer = (Maintainer)adapter.getAdapter().getItem(i);
 
-		if (source.length() != 0) {
-			Document doc = Jsoup.parse(source);
+          String outputText = null;
+          try {
+            outputText = wc.getFlaggedPackageText(maintainer);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          } catch (ExecutionException e) {
+            e.printStackTrace();
+          }
 
-			Elements options = doc.getElementById("id_maintainer")
-					.getElementsByTag("option");
+          if (spinnerCanChangeStuffYet && outputText != null) {
+            tv.setText(outputText);
+            scrollHome();
+          } else {
+            // This is to avoid the spinner from overwriting the
+            // news
+            // with the initial default selection
+            spinnerCanChangeStuffYet = true;
+          }
+        }
 
-			// Pick out the usernames of the maintainers from the block of html
-			for (int i = 0; i < options.size(); i++) {
-				maintainers.add(new Maintainer(options.get(i).val(), options
-						.get(i).text()));
-			}
-		}
+        @SuppressWarnings("rawtypes")
+        @Override
+        public void onNothingSelected(AdapterView arg0) {
+          TextView tv = (TextView)findViewById(R.id.txtArchNews);
+          String outputText = "";
+          if (spinnerCanChangeStuffYet) {
+            tv.setText(outputText);
+            scrollHome();
+          }
+        }
+      });
+    } else {
+      spinner.setVisibility(View.INVISIBLE);
+      TextView tvNoData = (TextView)findViewById(R.id.tvNoData);
+      tvNoData.setVisibility(View.VISIBLE);
+    }
+  }
 
-		return maintainers;
-	}
+  private void populateNews() throws InterruptedException, ExecutionException {
+    TextView tv = (TextView)findViewById(R.id.txtArchNews);
+    WebContents wc = new WebContents();
+    String outputText = wc.getNewsText();
+    tv.setText(outputText);
+    scrollHome();
+  }
 
-	private String getFlaggedPackageText(Maintainer maintainer)
-			throws InterruptedException, ExecutionException {
-		String source = new HTTPTask().execute(
-				"https://www.archlinux.org/packages/?sort=&arch=any&arch=x86_64&q=&maintainer="
-						+ maintainer.getUsername()
-						+ "&last_update=&flagged=Flagged&limit=all").get();
+  public void btnNews_clicked(View view) throws InterruptedException, ExecutionException {
+    populateNews();
+  }
 
-		if (source.length() != 0) {
-			Document doc = Jsoup.parse(source);
-
-			Elements pkgs = doc.getElementsByClass("flagged");
-
-			String outputText = maintainer.getFullName() + " has ";
-			String isare = "are";
-			String packages = "packages";
-			if (pkgs.isEmpty()) {
-				outputText += "zero";
-			} else if (pkgs.size() == 1) {
-				outputText += "only one";
-				isare = "is";
-				packages = "package";
-			} else {
-				outputText += Integer.valueOf(pkgs.size()).toString();
-			}
-			outputText += " " + packages + " that " + isare
-					+ " flagged out of date.";
-			return outputText;
-		}
-		return "Received no data from web";
-	}
-
-	private void populateSpinner() throws InterruptedException,
-			ExecutionException {
-		Spinner spinner = (Spinner) findViewById(R.id.lstMaintainers);
-
-		List<Maintainer> maintainers = getMaintainersColonSep();
-
-		if (!maintainers.isEmpty()) {
-			ArrayAdapter<Maintainer> adapter = new ArrayAdapter<Maintainer>(
-					this, android.R.layout.simple_spinner_item, maintainers);
-			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			spinner.setAdapter(adapter);
-
-			spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-				@SuppressWarnings("rawtypes")
-				@Override
-				public void onItemSelected(AdapterView adapter, View v, int i,
-						long lng) {
-					TextView tv = (TextView) findViewById(R.id.txtArchNews);
-					Maintainer maintainer = (Maintainer) adapter.getAdapter()
-							.getItem(i);
-
-					String outputText = null;
-					try {
-						outputText = getFlaggedPackageText(maintainer);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					} catch (ExecutionException e) {
-						e.printStackTrace();
-					}
-
-					if (spinnerCanChangeStuffYet && outputText != null) {
-						tv.setText(outputText);
-						scrollHome();
-					} else {
-						// This is to avoid the spinner from overwriting the
-						// news
-						// with the initial default selection
-						spinnerCanChangeStuffYet = true;
-					}
-				}
-
-				@SuppressWarnings("rawtypes")
-				@Override
-				public void onNothingSelected(AdapterView arg0) {
-					TextView tv = (TextView) findViewById(R.id.txtArchNews);
-					String outputText = "";
-					if (spinnerCanChangeStuffYet) {
-						tv.setText(outputText);
-						scrollHome();
-					}
-				}
-			});
-		} else {
-			spinner.setVisibility(View.INVISIBLE);
-			TextView tvNoData = (TextView) findViewById(R.id.tvNoData);
-			tvNoData.setVisibility(View.VISIBLE);
-		}
-	}
-
-	private void populateNews() throws InterruptedException, ExecutionException {
-		TextView tv = (TextView) findViewById(R.id.txtArchNews);
-		String outputText = getNewsText();
-		tv.setText(outputText);
-		scrollHome();
-	}
-
-	public void btnNews_clicked(View view) throws InterruptedException,
-			ExecutionException {
-		populateNews();
-	}
-
-	private void scrollHome() {
-		TextView tv = (TextView) findViewById(R.id.txtArchNews);
-		tv.scrollTo(0, 0);
-	}
+  private void scrollHome() {
+    TextView tv = (TextView)findViewById(R.id.txtArchNews);
+    tv.scrollTo(0, 0);
+  }
 
 }
