@@ -46,7 +46,7 @@ public class HTTPS extends AsyncTask<String, Void, String> {
 		}
 	}
 
-	public HttpClient getNewHttpClient() {
+	private HttpClient getNewHttpClient() {
 		try {
 			KeyStore trustStore = KeyStore.getInstance(KeyStore
 					.getDefaultType());
