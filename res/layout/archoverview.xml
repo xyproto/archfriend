@@ -31,6 +31,16 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/btnNews" />
+
+        <TextView
+            android:id="@+id/tvNoData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/btnNews"
+            android:text="@string/no_data"
+            android:visibility="invisible" />
     </RelativeLayout>
 
     <TextView
