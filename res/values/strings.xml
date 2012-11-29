@@ -2,17 +2,7 @@
 <resources>
 
     <string name="app_name">ArchFriend</string>
-    <string name="title">ArchFriend</string>
-    <string name="archlinux">Arch Linux</string>
     <string name="news">News</string>
-    <string name="web_button">Web</string>
-    <string name="json_button">JSON</string>
-    <string name="maintainer">Maintainer</string>
-    <string name="heart">&lt;3</string>
-    <string name="testbtn">Test</string>
-    <string name="archfriend">Arch Friend</string>
-    <string name="hallo">Hei hallo dette er tekst</string>
-    <string name="news_packages_distrowatch">News, packages, distrowatch</string>
     <string name="no_data">Received no data from the web</string>
 
 </resources>
