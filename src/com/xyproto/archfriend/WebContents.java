@@ -33,15 +33,22 @@ import java.util.concurrent.ExecutionException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import android.content.Context;
 import com.xyproto.archfriend.model.Maintainer;
 
 
 public class WebContents {
 
+  private Context context;
+
   private static String NewsURL = "https://www.archlinux.org/feeds/news/";
   private static String MaintainerURLp1 = "https://www.archlinux.org/packages/?sort=&arch=any&arch=x86_64&q=&maintainer=";
   private static String MaintainerURLp2 = "&last_update=&flagged=Flagged&limit=all";
   private static String MaintainerListURL = "https://www.archlinux.org/packages/?limit=1";
+
+  public WebContents(Context context) {
+    this.context = context;
+  }
 
   public String getFlaggedPackageText(Maintainer maintainer) throws InterruptedException, ExecutionException {
     String source = new HTTPTask().execute(MaintainerURLp1 + maintainer.getUsername() + MaintainerURLp2).get();
@@ -53,14 +60,14 @@ public class WebContents {
       Elements pkgs = doc.getElementsByClass("flagged");
 
       outputText = maintainer.getFullName();
-      outputText += " " + R.string.has;
+      outputText += " " + context.getString(R.string.has);
 
       if (pkgs.isEmpty()) {
-        outputText += " " + R.string.zero + " " + R.string.flagged_ood;
+        outputText += " " + context.getString(R.string.zero) + " " + context.getString(R.string.flagged_ood);
       } else if (pkgs.size() == 1) {
-        outputText += " " + R.string.only_one;
+        outputText += " " + context.getString(R.string.only_one);
       } else {
-        outputText += " " + Integer.valueOf(pkgs.size()).toString() + " " + R.string.flagged_ood;
+        outputText += " " + Integer.valueOf(pkgs.size()).toString() + " " + context.getString(R.string.flagged_ood);
       }
     }
 
@@ -125,7 +132,7 @@ public class WebContents {
       item = item.replaceAll("<i>", "_");
       item = item.replaceAll("</i>", "_");
 
-      outputText = "Latest news:\n\n" + item;
+      outputText = context.getString(R.string.latest_news) + "\n\n" + item;
     }
 
     return outputText;

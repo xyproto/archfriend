@@ -47,16 +47,12 @@ public class ArchFriendSplashActivity extends Activity {
   private boolean spinnerCanChangeStuffYet;
   private WebContents wc;
 
-  public ArchFriendSplashActivity() {
-    super();
-    wc = new WebContents();
-    spinnerCanChangeStuffYet = false;
-  }
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     requestWindowFeature(Window.FEATURE_NO_TITLE);
+    wc = new WebContents(getApplicationContext());
+    spinnerCanChangeStuffYet = false;
     setContentView(R.layout.splash);
   }
 
@@ -143,7 +139,6 @@ public class ArchFriendSplashActivity extends Activity {
 
   private void populateNews() throws InterruptedException, ExecutionException {
     TextView tvNews = (TextView)findViewById(R.id.txtArchNews);
-    WebContents wc = new WebContents();
     String outputText = wc.getNewsText();
 
     if (outputText != null)
