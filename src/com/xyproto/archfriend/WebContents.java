@@ -45,13 +45,14 @@ public class WebContents {
 
   public String getFlaggedPackageText(Maintainer maintainer) throws InterruptedException, ExecutionException {
     String source = new HTTPTask().execute(MaintainerURLp1 + maintainer.getUsername() + MaintainerURLp2).get();
+    String outputText = null;
 
     if (source.length() != 0) {
       Document doc = Jsoup.parse(source);
 
       Elements pkgs = doc.getElementsByClass("flagged");
 
-      String outputText = maintainer.getFullName() + " has ";
+      outputText = maintainer.getFullName() + " has ";
       String isare = "are";
       String packages = "packages";
       if (pkgs.isEmpty()) {
@@ -63,9 +64,11 @@ public class WebContents {
       } else {
         outputText += Integer.valueOf(pkgs.size()).toString();
       }
-      return outputText + " " + packages + " that " + isare + " flagged out of date.";
+
+      outputText += " " + packages + " that " + isare + " flagged out of date.";
     }
-    return "Received no data from web";
+
+    return outputText;
   }
 
   /*
@@ -90,6 +93,8 @@ public class WebContents {
   }
 
   public String getNewsText() throws InterruptedException, ExecutionException {
+    String outputText = null;
+
     String source = new HTTPTask().execute(NewsURL).get();
 
     if (source.length() != 0) {
@@ -124,11 +129,10 @@ public class WebContents {
       item = item.replaceAll("<i>", "_");
       item = item.replaceAll("</i>", "_");
 
-      String outputText = "Latest news:\n\n" + item;
-      return outputText;
+      outputText = "Latest news:\n\n" + item;
     }
 
-    return "Received no data from web";
+    return outputText;
   }
 
 }

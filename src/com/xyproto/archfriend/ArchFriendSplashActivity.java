@@ -95,10 +95,10 @@ public class ArchFriendSplashActivity extends Activity {
       spinner.setAdapter(adapter);
 
       spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-        @SuppressWarnings("rawtypes")
+
         @Override
-        public void onItemSelected(AdapterView adapter, View v, int i, long lng) {
-          TextView tv = (TextView)findViewById(R.id.txtArchNews);
+        public void onItemSelected(AdapterView<?> adapter, View v, int i, long lng) {
+          TextView tvNews = (TextView)findViewById(R.id.txtArchNews);
           Maintainer maintainer = (Maintainer)adapter.getAdapter().getItem(i);
 
           String outputText = null;
@@ -110,8 +110,12 @@ public class ArchFriendSplashActivity extends Activity {
             e.printStackTrace();
           }
 
-          if (spinnerCanChangeStuffYet && outputText != null) {
-            tv.setText(outputText);
+          if (spinnerCanChangeStuffYet) {
+            if (outputText != null)
+              tvNews.setText(outputText);
+            else
+              tvNews.setText(R.string.no_data);
+
             scrollHome();
           } else {
             // This is to avoid the spinner from overwriting the
@@ -120,16 +124,15 @@ public class ArchFriendSplashActivity extends Activity {
           }
         }
 
-        @SuppressWarnings("rawtypes")
         @Override
-        public void onNothingSelected(AdapterView arg0) {
+        public void onNothingSelected(AdapterView<?> arg0) {
           TextView tv = (TextView)findViewById(R.id.txtArchNews);
-          String outputText = "";
           if (spinnerCanChangeStuffYet) {
-            tv.setText(outputText);
+            tv.setText("");
             scrollHome();
           }
         }
+
       });
     } else {
       spinner.setVisibility(View.INVISIBLE);
@@ -139,10 +142,15 @@ public class ArchFriendSplashActivity extends Activity {
   }
 
   private void populateNews() throws InterruptedException, ExecutionException {
-    TextView tv = (TextView)findViewById(R.id.txtArchNews);
+    TextView tvNews = (TextView)findViewById(R.id.txtArchNews);
     WebContents wc = new WebContents();
     String outputText = wc.getNewsText();
-    tv.setText(outputText);
+
+    if (outputText != null)
+      tvNews.setText(outputText);
+    else
+      tvNews.setText(R.string.no_data);
+
     scrollHome();
   }
 
