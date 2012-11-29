@@ -80,6 +80,9 @@ public class HTTPTask extends AsyncTask<String, Void, String> {
 		}
 	}
 
+	// Thank you
+	// http://argillander.wordpress.com/2011/11/23/get-web-page-source-code-in-android/
+
 	@Override
 	protected String doInBackground(String... params) {
 		String url = params[0];
