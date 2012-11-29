@@ -29,19 +29,9 @@ package com.xyproto.archfriend;
 
 import java.util.concurrent.ExecutionException;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.protocol.HTTP;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.Window;
@@ -84,56 +74,6 @@ public class ArchFriendSplashActivity extends Activity {
 				tv.setMovementMethod(new ScrollingMovementMethod());
 			}
 		}, 500);
-	}
-
-	/**
-	 * Wraps up two strings as JSON then sends them to an URL
-	 * 
-	 * Thanks to primalpop at stackoverflow:
-	 * http://stackoverflow.com/questions/3027066/how-to-send-a-json
-	 * -object-over-request-with-android
-	 * 
-	 * Currently, this function can only send e-mail and password, it's not a
-	 * general function
-	 */
-	protected void sendJson(final String url, final String email,
-			final String pwd) {
-		Thread t = new Thread() {
-			public void run() {
-				Looper.prepare(); // For Preparing Message Pool for the child
-									// Thread
-				HttpClient client = new DefaultHttpClient();
-				HttpConnectionParams.setConnectionTimeout(client.getParams(),
-						10000); // Timeout
-								// Limit
-				JSONObject json = new JSONObject();
-				try {
-					HttpPost post = new HttpPost(url);
-					json.put("email", email);
-					json.put("password", pwd);
-					StringEntity se = new StringEntity(json.toString());
-					se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
-							"application/json"));
-					post.setEntity(se);
-					// HttpResponse response = client.execute(post);
-					client.execute(post);
-				} catch (Exception e) {
-					// Log.v("ERROR", "Could not send JSON");
-					// e.printStackTrace();
-				}
-				Looper.loop(); // Loop in the message queue
-			}
-		};
-		t.start();
-	}
-
-	public void btnJSON_clicked(View view) {
-		TextView tv = (TextView) findViewById(R.id.txtArchNews);
-		String outputText = "Sending an anonymous heart symbol to the author, over JSON...";
-		tv.setText(outputText);
-		sendJson("http://somehost:80/api", "archuser@somewhere.com", "<3");
-		outputText += "done.\n\nThank you. XD";
-		tv.setText(outputText);
 	}
 
 	private String getNewsText() throws InterruptedException,
@@ -301,21 +241,11 @@ public class ArchFriendSplashActivity extends Activity {
 		});
 	}
 
-	public void btnTest_clicked(View view) {
-		TextView tv = (TextView) findViewById(R.id.txtArchNews);
-		tv.setText("ok");
-	}
-
 	private void populateNews() throws InterruptedException, ExecutionException {
 		TextView tv = (TextView) findViewById(R.id.txtArchNews);
 		String outputText = getNewsText();
 		tv.setText(outputText);
 		scrollHome();
-	}
-
-	public void btnNews_clicked(View view) throws InterruptedException,
-			ExecutionException {
-		populateNews();
 	}
 
 	private void scrollHome() {
