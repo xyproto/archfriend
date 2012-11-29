@@ -1,61 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayout1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:weightSum="1">
+    android:background="#fafafa"
+    android:gravity="fill_horizontal" >
 
     <RelativeLayout
-        android:id="@+id/relativeLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#fafafa"
-        android:gravity="fill_horizontal" >
+        android:id="@+id/relativeLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true" >
 
-        <RelativeLayout
-            android:id="@+id/relativeLayout2"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
+        <Button
+            android:id="@+id/btnNews"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true" >
+            android:layout_alignParentTop="true"
+            android:onClick="btnNews_clicked"
+            android:text="@string/news" >
+        </Button>
 
-            <Button
-                android:id="@+id/btnNews"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:onClick="btnNews_clicked"
-                android:text="@string/news" >
-</Button>
-
-            <Spinner
-                android:id="@+id/lstMaintainers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/btnNews" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/txtArchNews"
+        <Spinner
+            android:id="@+id/lstMaintainers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/relativeLayout2"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:maxLines="2048"
-            android:padding="10dp"
-            android:scrollbars="vertical"
-            android:text="@string/news_packages_distrowatch"
-            android:textColor="#050505"
-            android:textColorHint="#050505"
-            android:textSize="14sp"
-            android:typeface="serif" />
-
+            android:layout_toRightOf="@+id/btnNews" />
     </RelativeLayout>
-</LinearLayout>
+
+    <TextView
+        android:id="@+id/txtArchNews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/relativeLayout2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:maxLines="2048"
+        android:padding="10dp"
+        android:scrollbars="vertical"
+        android:text="@string/news_packages_distrowatch"
+        android:textColor="#050505"
+        android:textColorHint="#050505"
+        android:textSize="14sp"
+        android:typeface="serif" />
+
+</RelativeLayout>
