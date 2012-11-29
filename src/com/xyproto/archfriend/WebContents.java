@@ -36,6 +36,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import android.content.Context;
 import com.xyproto.archfriend.model.Maintainer;
+import com.xyproto.archfriend.model.Package;
 
 
 public class WebContents {
@@ -54,9 +55,9 @@ public class WebContents {
   /*
    * Return the list of the packages flagged as out of date
    */
-  public List<String> getFlaggedPackageText(Maintainer maintainer) throws InterruptedException, ExecutionException {
+  public List<Package> getFlaggedPackageText(Maintainer maintainer) throws InterruptedException, ExecutionException {
     String source = new HTTPTask().execute(MaintainerURLp1 + maintainer.getUsername() + MaintainerURLp2).get();
-    List<String> packages = new ArrayList<String>();
+    List<Package> packages = new ArrayList<Package>();
 
     if (source.length() != 0) {
       Document doc = Jsoup.parse(source);
@@ -66,7 +67,7 @@ public class WebContents {
       for (Element tr : trs) {
         Elements flagged = tr.getElementsByClass("flagged");
         if (!flagged.isEmpty())
-          packages.add(tr.getElementsByTag("a").text());
+          packages.add(new Package(tr.getElementsByTag("a").text(), flagged.get(0).text()));
       }
     }
 

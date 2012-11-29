@@ -40,6 +40,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.xyproto.archfriend.model.Maintainer;
+import com.xyproto.archfriend.model.Package;
 
 
 public class ArchFriendSplashActivity extends Activity {
@@ -99,7 +100,7 @@ public class ArchFriendSplashActivity extends Activity {
 
           String outputText = null;
           try {
-            List<String> packages = wc.getFlaggedPackageText(maintainer);
+            List<Package> packages = wc.getFlaggedPackageText(maintainer);
 
             outputText = maintainer.getFullName();
             outputText += " " + getString(R.string.has);
@@ -111,7 +112,7 @@ public class ArchFriendSplashActivity extends Activity {
             } else {
               outputText += " " + Integer.valueOf(packages.size()).toString() + " " + getString(R.string.flagged_ood);
               outputText += "\n\n";
-              for (String pkg : packages) {
+              for (Package pkg : packages) {
                 outputText += pkg + "\n";
               }
             }
