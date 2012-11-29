@@ -115,8 +115,7 @@ public class ArchFriendSplashActivity extends Activity {
             scrollHome();
           } else {
             // This is to avoid the spinner from overwriting the
-            // news
-            // with the initial default selection
+            // news with the initial default selection
             spinnerCanChangeStuffYet = true;
           }
         }
