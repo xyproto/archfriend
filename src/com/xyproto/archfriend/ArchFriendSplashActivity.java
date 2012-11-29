@@ -63,7 +63,7 @@ public class ArchFriendSplashActivity extends Activity {
   @Override
   public void onStart() {
     super.onStart();
-    // Wait 0.5 sec then close splash screen (replace view context)
+    // Wait 0.7 sec then close splash screen (replace view context)
     Handler handler = new Handler();
     handler.postDelayed(new Runnable() {
       public void run() {
@@ -81,7 +81,7 @@ public class ArchFriendSplashActivity extends Activity {
         TextView tv = (TextView)findViewById(R.id.txtArchNews);
         tv.setMovementMethod(new ScrollingMovementMethod());
       }
-    }, 500);
+    }, 700);
   }
 
   private void populateSpinner() throws InterruptedException, ExecutionException {
