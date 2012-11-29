@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import android.content.Context;
 import com.xyproto.archfriend.model.Maintainer;
@@ -50,32 +51,30 @@ public class WebContents {
     this.context = context;
   }
 
-  public String getFlaggedPackageText(Maintainer maintainer) throws InterruptedException, ExecutionException {
+  /*
+   * Return the list of the packages flagged as out of date
+   */
+  public List<String> getFlaggedPackageText(Maintainer maintainer) throws InterruptedException, ExecutionException {
     String source = new HTTPTask().execute(MaintainerURLp1 + maintainer.getUsername() + MaintainerURLp2).get();
-    String outputText = null;
+    List<String> packages = new ArrayList<String>();
 
     if (source.length() != 0) {
       Document doc = Jsoup.parse(source);
 
-      Elements pkgs = doc.getElementsByClass("flagged");
+      Elements trs = doc.getElementsByTag("tr");
 
-      outputText = maintainer.getFullName();
-      outputText += " " + context.getString(R.string.has);
-
-      if (pkgs.isEmpty()) {
-        outputText += " " + context.getString(R.string.zero) + " " + context.getString(R.string.flagged_ood);
-      } else if (pkgs.size() == 1) {
-        outputText += " " + context.getString(R.string.only_one);
-      } else {
-        outputText += " " + Integer.valueOf(pkgs.size()).toString() + " " + context.getString(R.string.flagged_ood);
+      for (Element tr : trs) {
+        Elements flagged = tr.getElementsByClass("flagged");
+        if (!flagged.isEmpty())
+          packages.add(tr.getElementsByTag("a").text());
       }
     }
 
-    return outputText;
+    return packages;
   }
 
   /*
-   * Return a colon separated list of maintainer usernames as a string
+   * Return the list of the maintainers
    */
   public List<Maintainer> getMaintainersColonSep() throws InterruptedException, ExecutionException {
     List<Maintainer> maintainers = new ArrayList<Maintainer>();

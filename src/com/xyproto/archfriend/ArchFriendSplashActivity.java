@@ -99,7 +99,22 @@ public class ArchFriendSplashActivity extends Activity {
 
           String outputText = null;
           try {
-            outputText = wc.getFlaggedPackageText(maintainer);
+            List<String> packages = wc.getFlaggedPackageText(maintainer);
+
+            outputText = maintainer.getFullName();
+            outputText += " " + getString(R.string.has);
+            if (packages.isEmpty()) {
+              outputText += " " + getString(R.string.zero) + " " + getString(R.string.flagged_ood);
+            } else if (packages.size() == 1) {
+              outputText += " " + getString(R.string.only_one);
+              outputText += "\n\n" + packages.get(0);
+            } else {
+              outputText += " " + Integer.valueOf(packages.size()).toString() + " " + getString(R.string.flagged_ood);
+              outputText += "\n\n";
+              for (String pkg : packages) {
+                outputText += pkg + "\n";
+              }
+            }
           } catch (InterruptedException e) {
             e.printStackTrace();
           } catch (ExecutionException e) {
