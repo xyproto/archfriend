@@ -248,6 +248,11 @@ public class ArchFriendSplashActivity extends Activity {
 		scrollHome();
 	}
 
+	public void btnNews_clicked(View view) throws InterruptedException,
+			ExecutionException {
+		populateNews();
+	}
+
 	private void scrollHome() {
 		TextView tv = (TextView) findViewById(R.id.txtArchNews);
 		tv.scrollTo(0, 0);
