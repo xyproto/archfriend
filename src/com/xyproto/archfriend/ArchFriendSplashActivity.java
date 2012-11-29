@@ -167,21 +167,21 @@ public class ArchFriendSplashActivity extends Activity {
 						+ "&last_update=&flagged=Flagged&limit=all").get();
 
 		if (source.length() != 0) {
-			// Number of <td>'s
-			String searchText = "class=\"flagged\"";
-			int numFlagged = source.split(searchText).length - 1;
+			Document doc = Jsoup.parse(source);
+
+			Elements pkgs = doc.getElementsByClass("flagged");
 
 			String outputText = maintainer.getFullName() + " has ";
 			String isare = "are";
 			String packages = "packages";
-			if (numFlagged == 0) {
+			if (pkgs.isEmpty()) {
 				outputText += "zero";
-			} else if (numFlagged == 1) {
+			} else if (pkgs.size() == 1) {
 				outputText += "only one";
 				isare = "is";
 				packages = "package";
 			} else {
-				outputText += Integer.valueOf(numFlagged).toString();
+				outputText += Integer.valueOf(pkgs.size()).toString();
 			}
 			outputText += " " + packages + " that " + isare
 					+ " flagged out of date.";
