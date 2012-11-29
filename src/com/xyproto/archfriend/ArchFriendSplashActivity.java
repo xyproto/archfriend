@@ -79,7 +79,7 @@ public class ArchFriendSplashActivity extends Activity {
 	private String getNewsText() throws InterruptedException,
 			ExecutionException {
 		String source = new HTTPTask().execute(
-				"http://www.archlinux.org/feeds/news/").get();
+				"https://www.archlinux.org/feeds/news/").get();
 
 		if (source != null) {
 			// Get the relevant block of html text
@@ -161,7 +161,7 @@ public class ArchFriendSplashActivity extends Activity {
 	private String getFlaggedPackageText(String username)
 			throws InterruptedException, ExecutionException {
 		String source = new HTTPTask().execute(
-				"http://www.archlinux.org/packages/?sort=&arch=any&arch=x86_64&q=&maintainer="
+				"https://www.archlinux.org/packages/?sort=&arch=any&arch=x86_64&q=&maintainer="
 						+ username + "&last_update=&flagged=Flagged&limit=all")
 				.get();
 
