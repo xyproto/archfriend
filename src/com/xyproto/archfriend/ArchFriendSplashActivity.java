@@ -138,7 +138,7 @@ public class ArchFriendSplashActivity extends Activity {
 
 	private String getNewsText() throws InterruptedException,
 			ExecutionException {
-		String source = new HTTPS().execute(
+		String source = new HTTPTask().execute(
 				"http://www.archlinux.org/feeds/news/").get();
 
 		if (source != null) {
@@ -191,7 +191,7 @@ public class ArchFriendSplashActivity extends Activity {
 	 */
 	private String getMaintainersColonSep() throws InterruptedException,
 			ExecutionException {
-		String source = new HTTPS().execute(
+		String source = new HTTPTask().execute(
 				"https://www.archlinux.org/packages/?limit=1").get();
 
 		if (source != null) {
@@ -220,7 +220,7 @@ public class ArchFriendSplashActivity extends Activity {
 
 	private String getFlaggedPackageText(String username)
 			throws InterruptedException, ExecutionException {
-		String source = new HTTPS().execute(
+		String source = new HTTPTask().execute(
 				"http://www.archlinux.org/packages/?sort=&arch=any&arch=x86_64&q=&maintainer="
 						+ username + "&last_update=&flagged=Flagged&limit=all")
 				.get();

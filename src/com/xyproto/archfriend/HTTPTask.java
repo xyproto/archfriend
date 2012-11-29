@@ -3,9 +3,21 @@ package com.xyproto.archfriend;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -26,14 +38,9 @@ import org.apache.http.protocol.HTTP;
 
 import android.os.AsyncTask;
 
-public class HTTPS extends AsyncTask<String, Void, String> {
+public class HTTPTask extends AsyncTask<String, Void, String> {
 
-	private HttpGet mRequest;
-	private HttpClient mClient;
 	private BufferedReader mReader;
-
-	private StringBuffer mBuffer;
-	private String mNewLine;
 
 	private void closeReader() {
 		if (mReader == null)
@@ -79,12 +86,12 @@ public class HTTPS extends AsyncTask<String, Void, String> {
 
 		int bufsize = 2048;
 
-		mRequest = new HttpGet();
-		mClient = getNewHttpClient();
+		HttpGet mRequest = new HttpGet();
+		HttpClient mClient = getNewHttpClient();
 		mReader = null;
 
-		mBuffer = new StringBuffer(bufsize);
-		mNewLine = System.getProperty("line.separator");
+		StringBuffer mBuffer = new StringBuffer(bufsize);
+		String mNewLine = System.getProperty("line.separator");
 
 		mBuffer.setLength(0);
 
@@ -111,6 +118,47 @@ public class HTTPS extends AsyncTask<String, Void, String> {
 		}
 
 		return mBuffer.toString();
+	}
+
+	// Thank you
+	// http://stackoverflow.com/questions/2642777/trusting-all-certificates-using-httpclient-over-https
+
+	private class MySSLSocketFactory extends SSLSocketFactory {
+		SSLContext sslContext = SSLContext.getInstance("TLS");
+
+		public MySSLSocketFactory(KeyStore truststore)
+				throws NoSuchAlgorithmException, KeyManagementException,
+				KeyStoreException, UnrecoverableKeyException {
+			super(truststore);
+
+			TrustManager tm = new X509TrustManager() {
+				public void checkClientTrusted(X509Certificate[] chain,
+						String authType) throws CertificateException {
+				}
+
+				public void checkServerTrusted(X509Certificate[] chain,
+						String authType) throws CertificateException {
+				}
+
+				public X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+			};
+
+			sslContext.init(null, new TrustManager[] { tm }, null);
+		}
+
+		@Override
+		public Socket createSocket(Socket socket, String host, int port,
+				boolean autoClose) throws IOException, UnknownHostException {
+			return sslContext.getSocketFactory().createSocket(socket, host,
+					port, autoClose);
+		}
+
+		@Override
+		public Socket createSocket() throws IOException {
+			return sslContext.getSocketFactory().createSocket();
+		}
 	}
 
 }
