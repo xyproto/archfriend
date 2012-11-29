@@ -180,7 +180,7 @@ public class ArchFriendSplashActivity extends Activity {
             item = item.replaceAll("<i>", "_");
             item = item.replaceAll("</i>", "_");
 
-            String outputText = "Latest news:\n" + item;
+            String outputText = "Latest news:\n\n" + item;
             return outputText;
         }
         return "Received no data from web";
