@@ -10,4 +10,6 @@
     <string name="heart">&lt;3</string>
     <string name="testbtn">Test</string>
     <string name="archfriend">Arch Friend</string>
+    <string name="hallo">Hei hallo dette er tekst</string>
+    <string name="news_packages_distrowatch">News, packages, distrowatch</string>
 </resources>
