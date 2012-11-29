@@ -27,9 +27,8 @@
 
 package com.xyproto.archfriend;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import org.apache.http.client.ClientProtocolException;
+import java.util.concurrent.ExecutionException;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -38,6 +37,7 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -50,281 +50,277 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-
 public class ArchFriendSplashActivity extends Activity {
 
-    private boolean spinnerCanChangeStuffYet;
+	private boolean spinnerCanChangeStuffYet;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.splash);
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.splash);
+	}
 
-    @Override
-    public void onStart() {
-        spinnerCanChangeStuffYet = false;
-        super.onStart();
-        // Wait 0.5 sec then close splash screen (replace view context)
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                setContentView(R.layout.archoverview);
-                populateSpinner();
-                populateNews();
-                TextView tv = (TextView)findViewById(R.id.txtArchNews);
-                tv.setMovementMethod(new ScrollingMovementMethod());
-            }
-        }, 500);
-    }
+	@Override
+	public void onStart() {
+		spinnerCanChangeStuffYet = false;
+		super.onStart();
+		// Wait 0.5 sec then close splash screen (replace view context)
+		Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			public void run() {
+				setContentView(R.layout.archoverview);
 
-    /**
-     * Wraps up two strings as JSON then sends them to an URL
-     * 
-     * Thanks to primalpop at stackoverflow:
-     * http://stackoverflow.com/questions/3027066/how-to-send-a-json
-     * -object-over-request-with-android
-     * 
-     * Currently, this function can only send e-mail and password, it's not a
-     * general function
-     */
-    protected void sendJson(final String url, final String email, final String pwd) {
-        Thread t = new Thread() {
-            public void run() {
-                Looper.prepare(); // For Preparing Message Pool for the child
-                                  // Thread
-                HttpClient client = new DefaultHttpClient();
-                HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000); // Timeout
-                                                                                      // Limit
-                JSONObject json = new JSONObject();
-                try {
-                    HttpPost post = new HttpPost(url);
-                    json.put("email", email);
-                    json.put("password", pwd);
-                    StringEntity se = new StringEntity(json.toString());
-                    se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                    post.setEntity(se);
-                    // HttpResponse response = client.execute(post);
-                    client.execute(post);
-                } catch (Exception e) {
-                    // Log.v("ERROR", "Could not send JSON");
-                    // e.printStackTrace();
-                }
-                Looper.loop(); // Loop in the message queue
-            }
-        };
-        t.start();
-    }
+				try {
+					populateSpinner();
+					populateNews();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
 
-    public void btnJSON_clicked(View view) {
-        TextView tv = (TextView)findViewById(R.id.txtArchNews);
-        String outputText = "Sending an anonymous heart symbol to the author, over JSON...";
-        tv.setText(outputText);
-        sendJson("http://somehost:80/api", "archuser@somewhere.com", "<3");
-        outputText += "done.\n\nThank you. XD";
-        tv.setText(outputText);
-    }
+				TextView tv = (TextView) findViewById(R.id.txtArchNews);
+				tv.setMovementMethod(new ScrollingMovementMethod());
+			}
+		}, 500);
+	}
 
-    private String getNewsText() {
-        HTTPS https = new HTTPS();
-        String source = null;
-        try {
-            source = https.wget("http://www.archlinux.org/feeds/news/");
-        } catch (URISyntaxException e) {
-            // Log.w("ERROR", "Invalid URI");
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            // Log.w("ERROR", "Client protocol exception");
-            e.printStackTrace();
-        } catch (IOException e) {
-            // Log.w("ERROR", "Could not get news from web");
-            e.printStackTrace();
-        }
-        if (source != null) {
+	/**
+	 * Wraps up two strings as JSON then sends them to an URL
+	 * 
+	 * Thanks to primalpop at stackoverflow:
+	 * http://stackoverflow.com/questions/3027066/how-to-send-a-json
+	 * -object-over-request-with-android
+	 * 
+	 * Currently, this function can only send e-mail and password, it's not a
+	 * general function
+	 */
+	protected void sendJson(final String url, final String email,
+			final String pwd) {
+		Thread t = new Thread() {
+			public void run() {
+				Looper.prepare(); // For Preparing Message Pool for the child
+									// Thread
+				HttpClient client = new DefaultHttpClient();
+				HttpConnectionParams.setConnectionTimeout(client.getParams(),
+						10000); // Timeout
+								// Limit
+				JSONObject json = new JSONObject();
+				try {
+					HttpPost post = new HttpPost(url);
+					json.put("email", email);
+					json.put("password", pwd);
+					StringEntity se = new StringEntity(json.toString());
+					se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+							"application/json"));
+					post.setEntity(se);
+					// HttpResponse response = client.execute(post);
+					client.execute(post);
+				} catch (Exception e) {
+					// Log.v("ERROR", "Could not send JSON");
+					// e.printStackTrace();
+				}
+				Looper.loop(); // Loop in the message queue
+			}
+		};
+		t.start();
+	}
 
-            // Get the relevant block of html text
-            String item = source.split("description")[3].split("description")[0];
-            // Remove the first and two last characters
-            item = item.substring(1, item.length() - 2);
-            // Change &lt; into <
-            item = item.replaceAll("&lt;", "<");
-            // Change &gt; into >
-            item = item.replaceAll("&gt;", ">");
-            // Change <p> into nothing
-            item = item.replaceAll("<p>", "");
-            // Change </p> into a newline
-            item = item.replaceAll("</p>", "\n");
-            // Change <b> into ***
-            item = item.replaceAll("<b>", "*** ");
-            // Change </b> into ***
-            item = item.replaceAll("</b>", " ***");
-            // Change <code> into "
-            item = item.replaceAll("<code>", "\"");
-            // Change </code> into "
-            item = item.replaceAll("</code>", "\"");
-            // Change <a href=" into \n[
-            item = item.replaceAll("<a href=\"", "\n[ ");
-            // Change "> into ]\n
-            item = item.replaceAll("\">", " ]\n");
-            // Change </a> into nothing
-            item = item.replaceAll("</a>", "");
-            // Lists
-            item = item.replaceAll("<li>", "* \n");
-            item = item.replaceAll("</li>", "");
-            item = item.replaceAll("<ol>", "");
-            item = item.replaceAll("</ol>", "");
-            item = item.replaceAll("<ul>", "");
-            item = item.replaceAll("</ul>", "");
-            // Italic
-            item = item.replaceAll("<i>", "_");
-            item = item.replaceAll("</i>", "_");
+	public void btnJSON_clicked(View view) {
+		TextView tv = (TextView) findViewById(R.id.txtArchNews);
+		String outputText = "Sending an anonymous heart symbol to the author, over JSON...";
+		tv.setText(outputText);
+		sendJson("http://somehost:80/api", "archuser@somewhere.com", "<3");
+		outputText += "done.\n\nThank you. XD";
+		tv.setText(outputText);
+	}
 
-            String outputText = "Latest news:\n\n" + item;
-            return outputText;
-        }
-        return "Received no data from web";
-    }
+	private String getNewsText() throws InterruptedException,
+			ExecutionException {
+		String source = new HTTPS().execute(
+				"http://www.archlinux.org/feeds/news/").get();
 
-    /*
-     * Return a colon separated list of maintainer usernames as a string
-     */
-    private String getMaintainersColonSep() {
-        HTTPS https = new HTTPS();
-        String source = null;
-        try {
-            source = https.wget("https://www.archlinux.org/packages/?limit=1");
-        } catch (URISyntaxException e) {
-            // Log.w("ERROR", "Invalid URI");
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            // Log.w("ERROR", "Client protocol exception");
-            e.printStackTrace();
-        } catch (IOException e) {
-            // Log.w("ERROR", "Could not get maintainer info from web");
-            e.printStackTrace();
-        }
+		if (source != null) {
+			// Get the relevant block of html text
+			String item = source.split("description")[3].split("description")[0];
+			// Remove the first and two last characters
+			item = item.substring(1, item.length() - 2);
+			// Change &lt; into <
+			item = item.replaceAll("&lt;", "<");
+			// Change &gt; into >
+			item = item.replaceAll("&gt;", ">");
+			// Change <p> into nothing
+			item = item.replaceAll("<p>", "");
+			// Change </p> into a newline
+			item = item.replaceAll("</p>", "\n");
+			// Change <b> into ***
+			item = item.replaceAll("<b>", "*** ");
+			// Change </b> into ***
+			item = item.replaceAll("</b>", " ***");
+			// Change <code> into "
+			item = item.replaceAll("<code>", "\"");
+			// Change </code> into "
+			item = item.replaceAll("</code>", "\"");
+			// Change <a href=" into \n[
+			item = item.replaceAll("<a href=\"", "\n[ ");
+			// Change "> into ]\n
+			item = item.replaceAll("\">", " ]\n");
+			// Change </a> into nothing
+			item = item.replaceAll("</a>", "");
+			// Lists
+			item = item.replaceAll("<li>", "* \n");
+			item = item.replaceAll("</li>", "");
+			item = item.replaceAll("<ol>", "");
+			item = item.replaceAll("</ol>", "");
+			item = item.replaceAll("<ul>", "");
+			item = item.replaceAll("</ul>", "");
+			// Italic
+			item = item.replaceAll("<i>", "_");
+			item = item.replaceAll("</i>", "_");
 
-        if (source != null) {
-            // Pattern pattern = Pattern.compile("value=\"([a-z]+)");
-            // Matcher matcher = pattern.matcher(source);
+			String outputText = "Latest news:\n\n" + item;
+			return outputText;
+		}
 
-            String[] names = source.split("Maintainer")[1].split("/select")[0].split("\"");
+		return "Received no data from web";
+	}
 
-            // Pick out the usernames of the maintainers from the block of html
-            String joined = "";
-            for (int i = 10; i < names.length; i++) {
-                // the real names are in the discarded strings
-                if (names[i].indexOf('>') == -1) {
-                    joined += names[i] + ";";
-                }
-            }
-            // Remove the final ";"
-            joined = joined.substring(0, joined.length() - 1);
+	/*
+	 * Return a colon separated list of maintainer usernames as a string
+	 */
+	private String getMaintainersColonSep() throws InterruptedException,
+			ExecutionException {
+		String source = new HTTPS().execute(
+				"https://www.archlinux.org/packages/?limit=1").get();
 
-            return joined;
-        }
-        return "Received no data from web";
-    }
+		if (source != null) {
+			// Pattern pattern = Pattern.compile("value=\"([a-z]+)");
+			// Matcher matcher = pattern.matcher(source);
 
-    private String getFlaggedPackageText(String username) {
-        HTTPS https = new HTTPS();
-        String source = null;
-        try {
-            source = https.wget("http://www.archlinux.org/packages/?sort=&arch=any&arch=x86_64&q=&maintainer=" + username
-                    + "&last_update=&flagged=Flagged&limit=all");
-        } catch (URISyntaxException e) {
-            // Log.w("ERROR", "Invalid URI");
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            // Log.w("ERROR", "Client protocol exception");
-            e.printStackTrace();
-        } catch (IOException e) {
-            // Log.w("ERROR", "Could not get package info from web");
-            e.printStackTrace();
-        }
+			String[] names = source.split("Maintainer")[1].split("/select")[0]
+					.split("\"");
 
-        if (source != null) {
-            // Number of <td>'s
-            String searchText = "class=\"flagged\"";
-            int numFlagged = source.split(searchText).length - 1;
+			// Pick out the usernames of the maintainers from the block of html
+			String joined = "";
+			for (int i = 10; i < names.length; i++) {
+				// the real names are in the discarded strings
+				if (names[i].indexOf('>') == -1) {
+					joined += names[i] + ";";
+				}
+			}
+			// Remove the final ";"
+			joined = joined.substring(0, joined.length() - 1);
 
-            String outputText = username + " has ";
-            String isare = "are";
-            String packages = "packages";
-            if (numFlagged == 0) {
-                outputText += "zero";
-            } else if (numFlagged == 1) {
-                outputText += "only one";
-                isare = "is";
-                packages = "package";
-            } else {
-                outputText += Integer.valueOf(numFlagged).toString();
-            }
-            outputText += " " + packages + " that " + isare + " flagged out of date.";
-            return outputText;
-        }
-        return "Received no data from web";
-    }
+			return joined;
+		}
 
-    private void populateSpinner() {
-        Spinner spinner = (Spinner)findViewById(R.id.lstMaintainers);
-        String[] maintainers = getMaintainersColonSep().split(";");
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, maintainers);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+		return "Received no data from web";
+	}
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+	private String getFlaggedPackageText(String username)
+			throws InterruptedException, ExecutionException {
+		String source = new HTTPS().execute(
+				"http://www.archlinux.org/packages/?sort=&arch=any&arch=x86_64&q=&maintainer="
+						+ username + "&last_update=&flagged=Flagged&limit=all")
+				.get();
 
-            @SuppressWarnings("rawtypes")
-            @Override
-            public void onItemSelected(AdapterView adapter, View v, int i, long lng) {
-                TextView tv = (TextView)findViewById(R.id.txtArchNews);
-                String maintainer = (String)adapter.getAdapter().getItem(i);
-                String outputText = getFlaggedPackageText(maintainer);
-                if (spinnerCanChangeStuffYet) {
-                    tv.setText(outputText);
-                    scrollHome();
-                } else {
-                    // This is to avoid the spinner from overwriting the news
-                    // with the
-                    // initial default selection
-                    spinnerCanChangeStuffYet = true;
-                }
-            }
+		if (source != null) {
+			// Number of <td>'s
+			String searchText = "class=\"flagged\"";
+			int numFlagged = source.split(searchText).length - 1;
 
-            @SuppressWarnings("rawtypes")
-            @Override
-            public void onNothingSelected(AdapterView arg0) {
-                TextView tv = (TextView)findViewById(R.id.txtArchNews);
-                String outputText = "";
-                if (spinnerCanChangeStuffYet) {
-                    tv.setText(outputText);
-                    scrollHome();
-                }
-            }
-        });
-    }
+			String outputText = username + " has ";
+			String isare = "are";
+			String packages = "packages";
+			if (numFlagged == 0) {
+				outputText += "zero";
+			} else if (numFlagged == 1) {
+				outputText += "only one";
+				isare = "is";
+				packages = "package";
+			} else {
+				outputText += Integer.valueOf(numFlagged).toString();
+			}
+			outputText += " " + packages + " that " + isare
+					+ " flagged out of date.";
+			return outputText;
+		}
+		return "Received no data from web";
+	}
 
-    public void btnTest_clicked(View view) {
-        TextView tv = (TextView)findViewById(R.id.txtArchNews);
-        tv.setText("ok");
-    }
+	private void populateSpinner() throws InterruptedException,
+			ExecutionException {
+		Spinner spinner = (Spinner) findViewById(R.id.lstMaintainers);
+		String[] maintainers = getMaintainersColonSep().split(";");
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, maintainers);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner.setAdapter(adapter);
 
-    private void populateNews() {
-        TextView tv = (TextView)findViewById(R.id.txtArchNews);
-        String outputText = getNewsText();
-        tv.setText(outputText);
-        scrollHome();
-    }
+		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-    public void btnNews_clicked(View view) {
-        populateNews();
-    }
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void onItemSelected(AdapterView adapter, View v, int i,
+					long lng) {
+				TextView tv = (TextView) findViewById(R.id.txtArchNews);
+				String maintainer = (String) adapter.getAdapter().getItem(i);
 
-    private void scrollHome() {
-        TextView tv = (TextView)findViewById(R.id.txtArchNews);
-        tv.scrollTo(0, 0);
-    }
+				String outputText = null;
+				try {
+					outputText = getFlaggedPackageText(maintainer);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				if (spinnerCanChangeStuffYet && outputText != null) {
+					tv.setText(outputText);
+					scrollHome();
+				} else {
+					// This is to avoid the spinner from overwriting the news
+					// with the initial default selection
+					spinnerCanChangeStuffYet = true;
+				}
+			}
+
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void onNothingSelected(AdapterView arg0) {
+				TextView tv = (TextView) findViewById(R.id.txtArchNews);
+				String outputText = "";
+				if (spinnerCanChangeStuffYet) {
+					tv.setText(outputText);
+					scrollHome();
+				}
+			}
+		});
+	}
+
+	public void btnTest_clicked(View view) {
+		TextView tv = (TextView) findViewById(R.id.txtArchNews);
+		tv.setText("ok");
+	}
+
+	private void populateNews() throws InterruptedException, ExecutionException {
+		TextView tv = (TextView) findViewById(R.id.txtArchNews);
+		String outputText = getNewsText();
+		tv.setText(outputText);
+		scrollHome();
+	}
+
+	public void btnNews_clicked(View view) throws InterruptedException,
+			ExecutionException {
+		populateNews();
+	}
+
+	private void scrollHome() {
+		TextView tv = (TextView) findViewById(R.id.txtArchNews);
+		tv.scrollTo(0, 0);
+	}
 
 }

@@ -1,4 +1,3 @@
-
 package com.xyproto.archfriend;
 
 import java.io.BufferedReader;
@@ -7,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
@@ -24,82 +24,93 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 
+import android.os.AsyncTask;
 
-public class HTTPS {
+public class HTTPS extends AsyncTask<String, Void, String> {
 
-    private HttpGet mRequest;
-    private HttpClient mClient;
-    private BufferedReader mReader;
+	private HttpGet mRequest;
+	private HttpClient mClient;
+	private BufferedReader mReader;
 
-    private StringBuffer mBuffer;
-    private String mNewLine;
+	private StringBuffer mBuffer;
+	private String mNewLine;
 
-    // Thanks
-    // http://argillander.wordpress.com/2011/11/23/get-web-page-source-code-in-android/
-    public String wget(String url) throws ClientProtocolException, IOException, URISyntaxException {
+	private void closeReader() {
+		if (mReader == null)
+			return;
 
-        int bufsize = 2048;
+		try {
+			mReader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-        mRequest = new HttpGet();
-        mClient = getNewHttpClient();
-        mReader = null;
+	public HttpClient getNewHttpClient() {
+		try {
+			KeyStore trustStore = KeyStore.getInstance(KeyStore
+					.getDefaultType());
+			trustStore.load(null, null);
 
-        mBuffer = new StringBuffer(bufsize);
-        mNewLine = System.getProperty("line.separator");
+			SSLSocketFactory sf = new MySSLSocketFactory(trustStore);
+			sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 
-        mBuffer.setLength(0);
+			HttpParams params = new BasicHttpParams();
+			HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+			HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
 
-        try {
-            mRequest.setURI(new URI(url));
-            HttpResponse response = mClient.execute(mRequest);
+			SchemeRegistry registry = new SchemeRegistry();
+			registry.register(new Scheme("http", PlainSocketFactory
+					.getSocketFactory(), 80));
+			registry.register(new Scheme("https", sf, 443));
 
-            mReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"), bufsize);
+			ClientConnectionManager ccm = new ThreadSafeClientConnManager(
+					params, registry);
 
-            String line = "";
-            while ((line = mReader.readLine()) != null) {
-                mBuffer.append(line);
-                mBuffer.append(mNewLine);
-            }
-        } finally {
-            closeReader();
-        }
+			return new DefaultHttpClient(ccm, params);
+		} catch (Exception e) {
+			return new DefaultHttpClient();
+		}
+	}
 
-        return mBuffer.toString();
-    }
+	@Override
+	protected String doInBackground(String... params) {
+		String url = params[0];
 
-    private void closeReader() {
-        if (mReader == null)
-            return;
+		int bufsize = 2048;
 
-        try {
-            mReader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+		mRequest = new HttpGet();
+		mClient = getNewHttpClient();
+		mReader = null;
 
-    public HttpClient getNewHttpClient() {
-        try {
-            KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            trustStore.load(null, null);
+		mBuffer = new StringBuffer(bufsize);
+		mNewLine = System.getProperty("line.separator");
 
-            SSLSocketFactory sf = new MySSLSocketFactory(trustStore);
-            sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		mBuffer.setLength(0);
 
-            HttpParams params = new BasicHttpParams();
-            HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-            HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
+		try {
+			mRequest.setURI(new URI(url));
+			HttpResponse response = mClient.execute(mRequest);
 
-            SchemeRegistry registry = new SchemeRegistry();
-            registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-            registry.register(new Scheme("https", sf, 443));
+			mReader = new BufferedReader(new InputStreamReader(response
+					.getEntity().getContent(), "UTF-8"), bufsize);
 
-            ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, registry);
+			String line = "";
+			while ((line = mReader.readLine()) != null) {
+				mBuffer.append(line);
+				mBuffer.append(mNewLine);
+			}
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			closeReader();
+		}
 
-            return new DefaultHttpClient(ccm, params);
-        } catch (Exception e) {
-            return new DefaultHttpClient();
-        }
-    }
+		return mBuffer.toString();
+	}
 
 }
