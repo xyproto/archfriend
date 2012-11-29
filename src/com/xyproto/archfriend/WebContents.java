@@ -52,20 +52,16 @@ public class WebContents {
 
       Elements pkgs = doc.getElementsByClass("flagged");
 
-      outputText = maintainer.getFullName() + " has ";
-      String isare = "are";
-      String packages = "packages";
-      if (pkgs.isEmpty()) {
-        outputText += "zero";
-      } else if (pkgs.size() == 1) {
-        outputText += "only one";
-        isare = "is";
-        packages = "package";
-      } else {
-        outputText += Integer.valueOf(pkgs.size()).toString();
-      }
+      outputText = maintainer.getFullName();
+      outputText += " " + R.string.has;
 
-      outputText += " " + packages + " that " + isare + " flagged out of date.";
+      if (pkgs.isEmpty()) {
+        outputText += " " + R.string.zero + " " + R.string.flagged_ood;
+      } else if (pkgs.size() == 1) {
+        outputText += " " + R.string.only_one;
+      } else {
+        outputText += " " + Integer.valueOf(pkgs.size()).toString() + " " + R.string.flagged_ood;
+      }
     }
 
     return outputText;
