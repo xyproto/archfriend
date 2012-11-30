@@ -41,6 +41,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.ExecutionException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -64,9 +65,30 @@ import android.os.AsyncTask;
 
 
 /**
+ * A friendly class for getting the contents of web pages
+ */
+public class Web {
+
+  /**
+   * Return the contents of an URL
+   * 
+   * @param url
+   *          The uniform resource locator
+   * @return The contents of the page at the given URL
+   * @throws InterruptedException
+   * @throws ExecutionException
+   */
+  public static String get(String url) throws InterruptedException, ExecutionException {
+    return new HTTPTask().execute(url).get();
+  }
+
+}
+
+
+/**
  * A class for reading the UTF-8 contents of both http:// and https:// pages.
  */
-public class HTTPTask extends AsyncTask<String, Void, String> {
+class HTTPTask extends AsyncTask<String, Void, String> {
 
   private BufferedReader mReader;
 
@@ -181,5 +203,4 @@ public class HTTPTask extends AsyncTask<String, Void, String> {
       e.printStackTrace();
     }
   }
-
 }

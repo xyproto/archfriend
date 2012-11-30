@@ -41,7 +41,7 @@ import com.xyproto.archfriend.model.Package;
 /**
  * A class for fetching various Arch Linux related content from the web
  */
-public class WebContents {
+public class ArchWeb {
 
   private static String NewsURL = "https://www.archlinux.org/feeds/news/";
   private static String MaintainerURLp1 = "https://www.archlinux.org/packages/?sort=&arch=any&arch=x86_64&q=&maintainer=";
@@ -58,7 +58,7 @@ public class WebContents {
    * @throws ExecutionException
    */
   public static List<Package> getFlaggedPackages(Maintainer maintainer) throws InterruptedException, ExecutionException {
-    String source = new HTTPTask().execute(MaintainerURLp1 + maintainer.getUsername() + MaintainerURLp2).get();
+    String source = Web.get(MaintainerURLp1 + maintainer.getUsername() + MaintainerURLp2);
     List<Package> packages = new ArrayList<Package>();
 
     if (source.length() != 0) {
@@ -86,7 +86,7 @@ public class WebContents {
    */
   public static List<Maintainer> getMaintainers() throws InterruptedException, ExecutionException {
     List<Maintainer> maintainers = new ArrayList<Maintainer>();
-    String source = new HTTPTask().execute(MaintainerListURL).get();
+    String source = Web.get(MaintainerListURL);
 
     if (source.length() != 0) {
       Document doc = Jsoup.parse(source);
@@ -116,7 +116,7 @@ public class WebContents {
   public static String getNewsText() throws InterruptedException, ExecutionException {
     String outputText = null;
 
-    String source = new HTTPTask().execute(NewsURL).get();
+    String source = Web.get(NewsURL);
 
     if (source.length() != 0) {
       // Get the relevant block of html text
