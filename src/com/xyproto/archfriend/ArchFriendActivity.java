@@ -45,12 +45,10 @@ import com.xyproto.archfriend.model.Package;
 public class ArchFriendActivity extends Activity {
 
   private boolean spinnerCanChangeStuffYet;
-  private WebContents wc;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    wc = new WebContents(getApplicationContext());
     spinnerCanChangeStuffYet = false;
     setContentView(R.layout.splash);
   }
@@ -82,7 +80,7 @@ public class ArchFriendActivity extends Activity {
   private void populateSpinner() throws InterruptedException, ExecutionException {
     Spinner spinner = (Spinner)findViewById(R.id.lstMaintainers);
 
-    List<Maintainer> maintainers = wc.getMaintainers();
+    List<Maintainer> maintainers = WebContents.getMaintainers();
 
     if (!maintainers.isEmpty()) {
       ArrayAdapter<Maintainer> adapter = new ArrayAdapter<Maintainer>(this, android.R.layout.simple_spinner_item, maintainers);
@@ -98,7 +96,7 @@ public class ArchFriendActivity extends Activity {
 
           String outputText = null;
           try {
-            List<Package> packages = wc.getFlaggedPackages(maintainer);
+            List<Package> packages = WebContents.getFlaggedPackages(maintainer);
 
             outputText = maintainer.getFullName();
             if (packages.isEmpty()) {
@@ -152,10 +150,10 @@ public class ArchFriendActivity extends Activity {
 
   private void populateNews() throws InterruptedException, ExecutionException {
     TextView tvNews = (TextView)findViewById(R.id.txtArchNews);
-    String outputText = wc.getNewsText();
+    String outputText = WebContents.getNewsText();
 
     if (outputText != null)
-      tvNews.setText(outputText);
+      tvNews.setText(getString(R.string.latest_news) + "\n\n" + outputText);
     else
       tvNews.setText(R.string.no_data);
 

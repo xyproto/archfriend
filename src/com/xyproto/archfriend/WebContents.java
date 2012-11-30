@@ -34,7 +34,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import android.content.Context;
 import com.xyproto.archfriend.model.Maintainer;
 import com.xyproto.archfriend.model.Package;
 
@@ -44,16 +43,10 @@ import com.xyproto.archfriend.model.Package;
  */
 public class WebContents {
 
-  private Context context;
-
   private static String NewsURL = "https://www.archlinux.org/feeds/news/";
   private static String MaintainerURLp1 = "https://www.archlinux.org/packages/?sort=&arch=any&arch=x86_64&q=&maintainer=";
   private static String MaintainerURLp2 = "&last_update=&flagged=Flagged&limit=all";
   private static String MaintainerListURL = "https://www.archlinux.org/packages/?limit=1";
-
-  public WebContents(Context context) {
-    this.context = context;
-  }
 
   /**
    * Return the list of the packages flagged as out of date
@@ -64,7 +57,7 @@ public class WebContents {
    * @throws InterruptedException
    * @throws ExecutionException
    */
-  public List<Package> getFlaggedPackages(Maintainer maintainer) throws InterruptedException, ExecutionException {
+  public static List<Package> getFlaggedPackages(Maintainer maintainer) throws InterruptedException, ExecutionException {
     String source = new HTTPTask().execute(MaintainerURLp1 + maintainer.getUsername() + MaintainerURLp2).get();
     List<Package> packages = new ArrayList<Package>();
 
@@ -91,7 +84,7 @@ public class WebContents {
    * @throws InterruptedException
    * @throws ExecutionException
    */
-  public List<Maintainer> getMaintainers() throws InterruptedException, ExecutionException {
+  public static List<Maintainer> getMaintainers() throws InterruptedException, ExecutionException {
     List<Maintainer> maintainers = new ArrayList<Maintainer>();
     String source = new HTTPTask().execute(MaintainerListURL).get();
 
@@ -120,7 +113,7 @@ public class WebContents {
    * @throws InterruptedException
    * @throws ExecutionException
    */
-  public String getNewsText() throws InterruptedException, ExecutionException {
+  public static String getNewsText() throws InterruptedException, ExecutionException {
     String outputText = null;
 
     String source = new HTTPTask().execute(NewsURL).get();
@@ -157,7 +150,7 @@ public class WebContents {
       item = item.replaceAll("<i>", "_");
       item = item.replaceAll("</i>", "_");
 
-      outputText = context.getString(R.string.latest_news) + "\n\n" + item;
+      outputText = item;
     }
 
     return outputText;
