@@ -34,7 +34,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -51,7 +50,6 @@ public class ArchFriendSplashActivity extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    requestWindowFeature(Window.FEATURE_NO_TITLE);
     wc = new WebContents(getApplicationContext());
     spinnerCanChangeStuffYet = false;
     setContentView(R.layout.splash);
@@ -103,14 +101,13 @@ public class ArchFriendSplashActivity extends Activity {
             List<Package> packages = wc.getFlaggedPackageText(maintainer);
 
             outputText = maintainer.getFullName();
-            outputText += " " + getString(R.string.has);
             if (packages.isEmpty()) {
-              outputText += " " + getString(R.string.zero) + " " + getString(R.string.flagged_ood);
+              outputText += " " + String.format(getString(R.string.flagged_ood), getString(R.string.zero));
             } else if (packages.size() == 1) {
               outputText += " " + getString(R.string.only_one);
               outputText += "\n\n" + packages.get(0);
             } else {
-              outputText += " " + Integer.valueOf(packages.size()).toString() + " " + getString(R.string.flagged_ood);
+              outputText += " " + String.format(getString(R.string.flagged_ood), Integer.valueOf(packages.size()));
               outputText += "\n\n";
               for (Package pkg : packages) {
                 outputText += pkg + "\n";
