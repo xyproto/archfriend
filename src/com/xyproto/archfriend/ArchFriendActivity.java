@@ -42,7 +42,7 @@ import com.xyproto.archfriend.model.Maintainer;
 import com.xyproto.archfriend.model.Package;
 
 
-public class ArchFriendSplashActivity extends Activity {
+public class ArchFriendActivity extends Activity {
 
   private boolean spinnerCanChangeStuffYet;
   private WebContents wc;
