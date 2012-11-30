@@ -55,7 +55,7 @@ public class WebContents {
   /*
    * Return the list of the packages flagged as out of date
    */
-  public List<Package> getFlaggedPackageText(Maintainer maintainer) throws InterruptedException, ExecutionException {
+  public List<Package> getFlaggedPackages(Maintainer maintainer) throws InterruptedException, ExecutionException {
     String source = new HTTPTask().execute(MaintainerURLp1 + maintainer.getUsername() + MaintainerURLp2).get();
     List<Package> packages = new ArrayList<Package>();
 
@@ -77,7 +77,7 @@ public class WebContents {
   /*
    * Return the list of the maintainers
    */
-  public List<Maintainer> getMaintainersColonSep() throws InterruptedException, ExecutionException {
+  public List<Maintainer> getMaintainers() throws InterruptedException, ExecutionException {
     List<Maintainer> maintainers = new ArrayList<Maintainer>();
     String source = new HTTPTask().execute(MaintainerListURL).get();
 
