@@ -80,7 +80,7 @@ public class ArchFriendActivity extends Activity {
   private void populateSpinner() throws InterruptedException, ExecutionException {
     Spinner spinner = (Spinner)findViewById(R.id.lstMaintainers);
 
-    List<Maintainer> maintainers = WebContents.getMaintainers();
+    List<Maintainer> maintainers = ArchWeb.getMaintainers();
 
     if (!maintainers.isEmpty()) {
       ArrayAdapter<Maintainer> adapter = new ArrayAdapter<Maintainer>(this, android.R.layout.simple_spinner_item, maintainers);
@@ -96,7 +96,7 @@ public class ArchFriendActivity extends Activity {
 
           String outputText = null;
           try {
-            List<Package> packages = WebContents.getFlaggedPackages(maintainer);
+            List<Package> packages = ArchWeb.getFlaggedPackages(maintainer);
 
             outputText = maintainer.getFullName();
             if (packages.isEmpty()) {
@@ -150,7 +150,7 @@ public class ArchFriendActivity extends Activity {
 
   private void populateNews() throws InterruptedException, ExecutionException {
     TextView tvNews = (TextView)findViewById(R.id.txtArchNews);
-    String outputText = WebContents.getNewsText();
+    String outputText = ArchWeb.getNewsText();
 
     if (outputText != null)
       tvNews.setText(getString(R.string.latest_news) + "\n\n" + outputText);
