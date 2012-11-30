@@ -34,7 +34,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -51,7 +50,6 @@ public class ArchFriendSplashActivity extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    requestWindowFeature(Window.FEATURE_NO_TITLE);
     wc = new WebContents(getApplicationContext());
     spinnerCanChangeStuffYet = false;
     setContentView(R.layout.splash);
