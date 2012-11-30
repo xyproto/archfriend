@@ -63,20 +63,12 @@ import org.apache.http.protocol.HTTP;
 import android.os.AsyncTask;
 
 
+/**
+ * A class for reading the UTF-8 contents of both http:// and https:// pages.
+ */
 public class HTTPTask extends AsyncTask<String, Void, String> {
 
   private BufferedReader mReader;
-
-  private void closeReader() {
-    if (mReader == null)
-      return;
-
-    try {
-      mReader.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
 
   private HttpClient getNewHttpClient() {
     try {
@@ -104,7 +96,6 @@ public class HTTPTask extends AsyncTask<String, Void, String> {
 
   // Thank you
   // http://argillander.wordpress.com/2011/11/23/get-web-page-source-code-in-android/
-
   @Override
   protected String doInBackground(String... params) {
     String url = params[0];
@@ -146,7 +137,6 @@ public class HTTPTask extends AsyncTask<String, Void, String> {
 
   // Thank you
   // http://stackoverflow.com/questions/2642777/trusting-all-certificates-using-httpclient-over-https
-
   private class MySSLSocketFactory extends SSLSocketFactory {
     SSLContext sslContext = SSLContext.getInstance("TLS");
 
@@ -178,6 +168,17 @@ public class HTTPTask extends AsyncTask<String, Void, String> {
     @Override
     public Socket createSocket() throws IOException {
       return sslContext.getSocketFactory().createSocket();
+    }
+  }
+
+  private void closeReader() {
+    if (mReader == null)
+      return;
+
+    try {
+      mReader.close();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 
