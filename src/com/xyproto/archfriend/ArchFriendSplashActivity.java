@@ -84,7 +84,7 @@ public class ArchFriendSplashActivity extends Activity {
   private void populateSpinner() throws InterruptedException, ExecutionException {
     Spinner spinner = (Spinner)findViewById(R.id.lstMaintainers);
 
-    List<Maintainer> maintainers = wc.getMaintainersColonSep();
+    List<Maintainer> maintainers = wc.getMaintainers();
 
     if (!maintainers.isEmpty()) {
       ArrayAdapter<Maintainer> adapter = new ArrayAdapter<Maintainer>(this, android.R.layout.simple_spinner_item, maintainers);

@@ -39,6 +39,9 @@ import com.xyproto.archfriend.model.Maintainer;
 import com.xyproto.archfriend.model.Package;
 
 
+/**
+ * A class for fetching various Arch Linux related content from the web
+ */
 public class WebContents {
 
   private Context context;
@@ -52,8 +55,14 @@ public class WebContents {
     this.context = context;
   }
 
-  /*
+  /**
    * Return the list of the packages flagged as out of date
+   * 
+   * @param maintainer
+   *          The maintainer in question
+   * @return A list of packages
+   * @throws InterruptedException
+   * @throws ExecutionException
    */
   public List<Package> getFlaggedPackageText(Maintainer maintainer) throws InterruptedException, ExecutionException {
     String source = new HTTPTask().execute(MaintainerURLp1 + maintainer.getUsername() + MaintainerURLp2).get();
@@ -66,18 +75,23 @@ public class WebContents {
 
       for (Element tr : trs) {
         Elements flagged = tr.getElementsByClass("flagged");
-        if (!flagged.isEmpty())
+        if (!flagged.isEmpty()) {
           packages.add(new Package(tr.getElementsByTag("a").text(), flagged.get(0).text()));
+        }
       }
     }
 
     return packages;
   }
 
-  /*
-   * Return the list of the maintainers
+  /**
+   * Get the list of maintainers
+   * 
+   * @return A list of maintainers
+   * @throws InterruptedException
+   * @throws ExecutionException
    */
-  public List<Maintainer> getMaintainersColonSep() throws InterruptedException, ExecutionException {
+  public List<Maintainer> getMaintainers() throws InterruptedException, ExecutionException {
     List<Maintainer> maintainers = new ArrayList<Maintainer>();
     String source = new HTTPTask().execute(MaintainerListURL).get();
 
@@ -87,14 +101,25 @@ public class WebContents {
       Elements options = doc.getElementById("id_maintainer").getElementsByTag("option");
 
       // Pick out the usernames of the maintainers from the block of html
+      String username;
       for (int i = 0; i < options.size(); i++) {
-        maintainers.add(new Maintainer(options.get(i).val(), options.get(i).text()));
+        username = options.get(i).val();
+        if (!username.equals("orphan")) {
+          maintainers.add(new Maintainer(username, options.get(i).text()));
+        }
       }
     }
 
     return maintainers;
   }
 
+  /**
+   * Fetch the latest news item and convert it to some sort of plain text
+   * 
+   * @return The latest news item as a string
+   * @throws InterruptedException
+   * @throws ExecutionException
+   */
   public String getNewsText() throws InterruptedException, ExecutionException {
     String outputText = null;
 
