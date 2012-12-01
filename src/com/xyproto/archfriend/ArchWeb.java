@@ -115,6 +115,10 @@ public class ArchWeb {
    */
   public static String getNewsText() throws InterruptedException, ExecutionException {
     String newsText = "";
+    int pos1;
+    int pos2;
+    String part1;
+    String part2;
 
     String source = Web.get(NewsURL);
     if (source.length() != 0) {
@@ -123,7 +127,7 @@ public class ArchWeb {
       // Remove the first and the two last characters
       newsText = newsText.substring(1, newsText.length() - 2);
       // Strip away newlines in the html first
-      newsText = newsText.replaceAll("\n", "");
+      newsText = newsText.replaceAll("\n", " ");
       // Angle brackets
       newsText = newsText.replaceAll("&lt;", "<");
       newsText = newsText.replaceAll("&gt;", ">");
@@ -136,9 +140,16 @@ public class ArchWeb {
       // Code
       newsText = newsText.replaceAll("<code>", "\"");
       newsText = newsText.replaceAll("</code>", "\"");
-      // Links
-      newsText = newsText.replaceAll("<a href=\"", "\n[ ");
-      newsText = newsText.replaceAll("\">", " ]\n");
+      // Links, just remove them
+      while (newsText.indexOf("<a href=") != -1) {
+        pos1 = newsText.indexOf("<a href=\"");
+        pos2 = newsText.indexOf("\">", pos1 + 1);
+        part1 = newsText.substring(0, pos1 - 1);
+        part2 = newsText.substring(pos2 + 2, newsText.length());
+        newsText = part1 + part2;
+      }
+      // newsText = newsText.replaceAll("<a href=\"", "\n[ ");
+      // newsText = newsText.replaceAll("\">", " ]\n");
       newsText = newsText.replaceAll("</a>", "");
       // Lists
       newsText = newsText.replaceAll("<li>", "* \n");
@@ -150,6 +161,12 @@ public class ArchWeb {
       // Italic
       newsText = newsText.replaceAll("<i>", "_");
       newsText = newsText.replaceAll("</i>", "_");
+      // Double spaces
+      newsText = newsText.replaceAll("  ", " ");
+      // Leading spaces
+      newsText = newsText.replaceAll("\n ", "\n");
+      // Final trim
+      newsText = newsText.trim();
     }
 
     return newsText;
