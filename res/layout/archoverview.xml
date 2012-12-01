@@ -54,7 +54,6 @@
         android:maxLines="2048"
         android:padding="10dp"
         android:scrollbars="vertical"
-        android:text=""
         android:textColor="#050505"
         android:textColorHint="#050505"
         android:textSize="14sp"
