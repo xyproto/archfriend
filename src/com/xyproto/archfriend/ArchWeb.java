@@ -119,6 +119,8 @@ public class ArchWeb {
     int pos2;
     String part1;
     String part2;
+    String ahrefStart = "<a href=";
+    String ahrefEnd = "\">";
 
     String source = Web.get(NewsURL);
     if (source.length() != 0) {
@@ -141,11 +143,11 @@ public class ArchWeb {
       newsText = newsText.replaceAll("<code>", "\"");
       newsText = newsText.replaceAll("</code>", "\"");
       // Links, just remove them
-      while (newsText.indexOf("<a href=") != -1) {
-        pos1 = newsText.indexOf("<a href=\"");
-        pos2 = newsText.indexOf("\">", pos1 + 1);
+      while (newsText.indexOf(ahrefStart) != -1) {
+        pos1 = newsText.indexOf(ahrefStart);
+        pos2 = newsText.indexOf(ahrefEnd, pos1 + 1);
         part1 = newsText.substring(0, pos1 - 1);
-        part2 = newsText.substring(pos2 + 2, newsText.length());
+        part2 = newsText.substring(pos2 + ahrefEnd.length(), newsText.length());
         newsText = part1 + part2;
       }
       // newsText = newsText.replaceAll("<a href=\"", "\n[ ");
