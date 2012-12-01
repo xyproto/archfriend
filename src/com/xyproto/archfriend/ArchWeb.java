@@ -129,7 +129,7 @@ public class ArchWeb {
       newsText = newsText.replaceAll("&gt;", ">");
       // Paragraphs
       newsText = newsText.replaceAll("<p>", "");
-      newsText = newsText.replaceAll("</p>", "\n");
+      newsText = newsText.replaceAll("</p>", "\n\n");
       // Bold
       newsText = newsText.replaceAll("<b>", "*** ");
       newsText = newsText.replaceAll("</b>", " ***");
