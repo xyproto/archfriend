@@ -148,6 +148,10 @@ public class ArchWeb {
         pos2 = newsText.indexOf(ahrefEnd, pos1 + 1);
         part1 = newsText.substring(0, pos1 - 1);
         part2 = newsText.substring(pos2 + ahrefEnd.length(), newsText.length());
+        // TODO: Collect URLs and have choice in the menu named "Launch URLS"
+        // that
+        // opens up a list of all URLs mentioned in the new text, that can be
+        // opened.
         newsText = part1 + part2;
       }
       // newsText = newsText.replaceAll("<a href=\"", "\n[ ");
