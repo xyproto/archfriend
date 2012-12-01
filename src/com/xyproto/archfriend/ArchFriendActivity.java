@@ -152,11 +152,12 @@ public class ArchFriendActivity extends Activity {
   private void populateNews() throws InterruptedException, ExecutionException {
     TextView tvNews = (TextView)findViewById(R.id.txtArchNews);
     List<News> news = ArchWeb.getNews(1);
-    String outputText = news.get(0).getText();
 
-    if (outputText != null)
-      tvNews.setText(getString(R.string.latest_news) + "\n\n" + outputText);
-    else
+    if (news.size() != 0) {
+      String newsText = news.get(0).getText();
+      String outputText = getString(R.string.latest_news) + "\n\n" + newsText;
+      tvNews.setText(outputText);
+    } else
       tvNews.setText(R.string.no_data);
 
     scrollHome();
