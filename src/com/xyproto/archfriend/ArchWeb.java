@@ -114,46 +114,45 @@ public class ArchWeb {
    * @throws ExecutionException
    */
   public static String getNewsText() throws InterruptedException, ExecutionException {
-    String outputText = null;
+    String newsText = "";
 
     String source = Web.get(NewsURL);
-
     if (source.length() != 0) {
       // Get the relevant block of html text
-      String item = source.split("description")[3].split("description")[0];
+      newsText = source.split("description")[3].split("description")[0];
       // Remove the first and the two last characters
-      item = item.substring(1, item.length() - 2);
+      newsText = newsText.substring(1, newsText.length() - 2);
+      // Strip away newlines in the html first
+      newsText = newsText.replaceAll("\n", "");
       // Angle brackets
-      item = item.replaceAll("&lt;", "<");
-      item = item.replaceAll("&gt;", ">");
+      newsText = newsText.replaceAll("&lt;", "<");
+      newsText = newsText.replaceAll("&gt;", ">");
       // Paragraphs
-      item = item.replaceAll("<p>", "");
-      item = item.replaceAll("</p>", "\n");
+      newsText = newsText.replaceAll("<p>", "");
+      newsText = newsText.replaceAll("</p>", "\n");
       // Bold
-      item = item.replaceAll("<b>", "*** ");
-      item = item.replaceAll("</b>", " ***");
+      newsText = newsText.replaceAll("<b>", "*** ");
+      newsText = newsText.replaceAll("</b>", " ***");
       // Code
-      item = item.replaceAll("<code>", "\"");
-      item = item.replaceAll("</code>", "\"");
+      newsText = newsText.replaceAll("<code>", "\"");
+      newsText = newsText.replaceAll("</code>", "\"");
       // Links
-      item = item.replaceAll("<a href=\"", "\n[ ");
-      item = item.replaceAll("\">", " ]\n");
-      item = item.replaceAll("</a>", "");
+      newsText = newsText.replaceAll("<a href=\"", "\n[ ");
+      newsText = newsText.replaceAll("\">", " ]\n");
+      newsText = newsText.replaceAll("</a>", "");
       // Lists
-      item = item.replaceAll("<li>", "* \n");
-      item = item.replaceAll("</li>", "");
-      item = item.replaceAll("<ol>", "");
-      item = item.replaceAll("</ol>", "");
-      item = item.replaceAll("<ul>", "");
-      item = item.replaceAll("</ul>", "");
+      newsText = newsText.replaceAll("<li>", "* \n");
+      newsText = newsText.replaceAll("</li>", "");
+      newsText = newsText.replaceAll("<ol>", "");
+      newsText = newsText.replaceAll("</ol>", "");
+      newsText = newsText.replaceAll("<ul>", "");
+      newsText = newsText.replaceAll("</ul>", "");
       // Italic
-      item = item.replaceAll("<i>", "_");
-      item = item.replaceAll("</i>", "_");
-
-      outputText = item;
+      newsText = newsText.replaceAll("<i>", "_");
+      newsText = newsText.replaceAll("</i>", "_");
     }
 
-    return outputText;
+    return newsText;
   }
 
 }

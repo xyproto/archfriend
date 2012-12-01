@@ -121,7 +121,7 @@ public class ArchFriendActivity extends Activity {
             if (outputText != null)
               tvNews.setText(outputText);
             else
-              tvNews.setText(R.string.no_data);
+              tvNews.setText(R.string.no_maintainers);
 
             scrollHome();
           } else {
