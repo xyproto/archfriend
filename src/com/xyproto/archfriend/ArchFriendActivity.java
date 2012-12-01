@@ -39,6 +39,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.xyproto.archfriend.model.Maintainer;
+import com.xyproto.archfriend.model.News;
 import com.xyproto.archfriend.model.Package;
 
 
@@ -150,7 +151,8 @@ public class ArchFriendActivity extends Activity {
 
   private void populateNews() throws InterruptedException, ExecutionException {
     TextView tvNews = (TextView)findViewById(R.id.txtArchNews);
-    String outputText = ArchWeb.getNewsText();
+    List<News> news = ArchWeb.getNews(1);
+    String outputText = news.get(0).getText();
 
     if (outputText != null)
       tvNews.setText(getString(R.string.latest_news) + "\n\n" + outputText);

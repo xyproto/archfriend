@@ -35,6 +35,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import com.xyproto.archfriend.model.Maintainer;
+import com.xyproto.archfriend.model.News;
 import com.xyproto.archfriend.model.Package;
 
 
@@ -43,10 +44,11 @@ import com.xyproto.archfriend.model.Package;
  */
 public class ArchWeb {
 
-  private static String NewsURL = "https://www.archlinux.org/feeds/news/";
-  private static String MaintainerURLp1 = "https://www.archlinux.org/packages/?sort=&arch=any&arch=x86_64&q=&maintainer=";
-  private static String MaintainerURLp2 = "&last_update=&flagged=Flagged&limit=all";
-  private static String MaintainerListURL = "https://www.archlinux.org/packages/?limit=1";
+  private static final String ArchURL = "https://www.archlinux.org";
+  private static final String NewsURL = ArchURL + "/news/";
+  private static final String MaintainerURLp1 = ArchURL + "/packages/?sort=&arch=any&arch=x86_64&q=&maintainer=";
+  private static final String MaintainerURLp2 = "&last_update=&flagged=Flagged&limit=all";
+  private static final String MaintainerListURL = ArchURL + "/packages/?limit=1";
 
   /**
    * Return the list of the packages flagged as out of date
@@ -106,76 +108,61 @@ public class ArchWeb {
     return maintainers;
   }
 
+  public static List<News> getNews(int limit) throws InterruptedException, ExecutionException {
+    List<News> news = new ArrayList<News>();
+
+    String source = Web.get(NewsURL);
+    if (source.length() != 0) {
+      Document doc = Jsoup.parse(source);
+
+      Elements urls = doc.getElementsByClass("wrap");
+      for (int i = 0; i < urls.size() && i < limit; i++) {
+        String url = urls.get(i).getElementsByTag("a").get(0).attr("href");
+        news.add(getNews(ArchURL + url));
+      }
+    }
+
+    return news;
+  }
+
   /**
-   * Fetch the latest news item and convert it to some sort of plain text
+   * Fetch the news item and convert it to some sort of plain text
    * 
+   * @param url
+   *          the news to fetch
    * @return The latest news item as a string
    * @throws InterruptedException
    * @throws ExecutionException
    */
-  public static String getNewsText() throws InterruptedException, ExecutionException {
-    String newsText = "";
-    int pos1;
-    int pos2;
-    String part1;
-    String part2;
-    String ahrefStart = "<a href=";
-    String ahrefEnd = "\">";
+  public static News getNews(String url) throws InterruptedException, ExecutionException {
+    News news = null;
 
-    String source = Web.get(NewsURL);
+    String source = Web.get(url);
     if (source.length() != 0) {
+      Document doc = Jsoup.parse(source);
+
       // Get the relevant block of html text
-      newsText = source.split("description")[3].split("description")[0];
-      // Remove the first and the two last characters
-      newsText = newsText.substring(1, newsText.length() - 2);
-      // Strip away newlines in the html first
-      newsText = newsText.replaceAll("\n", " ");
-      // Angle brackets
-      newsText = newsText.replaceAll("&lt;", "<");
-      newsText = newsText.replaceAll("&gt;", ">");
-      // Paragraphs
-      newsText = newsText.replaceAll("<p>", "");
-      newsText = newsText.replaceAll("</p>", "\n\n");
-      // Bold
-      newsText = newsText.replaceAll("<b>", "*** ");
-      newsText = newsText.replaceAll("</b>", " ***");
-      // Code
-      newsText = newsText.replaceAll("<code>", "\"");
-      newsText = newsText.replaceAll("</code>", "\"");
-      // Links, just remove them
-      while (newsText.indexOf(ahrefStart) != -1) {
-        pos1 = newsText.indexOf(ahrefStart);
-        pos2 = newsText.indexOf(ahrefEnd, pos1 + 1);
-        part1 = newsText.substring(0, pos1 - 1);
-        part2 = newsText.substring(pos2 + ahrefEnd.length(), newsText.length());
-        // TODO: Collect URLs and have choice in the menu named "Launch URLS"
-        // that
-        // opens up a list of all URLs mentioned in the new text, that can be
-        // opened.
-        newsText = part1 + part2;
-      }
-      // newsText = newsText.replaceAll("<a href=\"", "\n[ ");
-      // newsText = newsText.replaceAll("\">", " ]\n");
-      newsText = newsText.replaceAll("</a>", "");
-      // Lists
-      newsText = newsText.replaceAll("<li>", "* \n");
-      newsText = newsText.replaceAll("</li>", "");
-      newsText = newsText.replaceAll("<ol>", "");
-      newsText = newsText.replaceAll("</ol>", "");
-      newsText = newsText.replaceAll("<ul>", "");
-      newsText = newsText.replaceAll("</ul>", "");
-      // Italic
-      newsText = newsText.replaceAll("<i>", "_");
-      newsText = newsText.replaceAll("</i>", "_");
-      // Double spaces
-      newsText = newsText.replaceAll("  ", " ");
-      // Leading spaces
-      newsText = newsText.replaceAll("\n ", "\n");
-      // Final trim
-      newsText = newsText.trim();
+      Element content = doc.getElementsByClass("article-content").get(0);
+      String text = content.text();
+
+      String title = doc.getElementsByTag("h2").get(0).text();
+
+      String[] info = doc.getElementsByClass("article-info").get(0).text().split(" - ");
+      String date = info[0];
+      String author = info[1];
+
+      news = new News();
+      news.setText(text);
+      news.setTitle(title);
+      news.setAuthor(author);
+      news.setDate(date);
+      news.setUrl(url);
+
+      // TODO: Collect URLs and have choice in the menu named 'Launch URLs' that
+      // opens up a list of all URLs mentioned in the new text, that can be
+      // opened.
     }
 
-    return newsText;
+    return news;
   }
-
 }
