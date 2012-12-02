@@ -80,7 +80,7 @@ public class ArchWeb {
   }
 
   /**
-   * Get the list of maintainers
+   * Get the list of the maintainers
    * 
    * @return A list of maintainers
    * @throws InterruptedException
@@ -108,17 +108,25 @@ public class ArchWeb {
     return maintainers;
   }
 
-  public static List<News> getNews(int limit) throws InterruptedException, ExecutionException {
-    List<News> news = new ArrayList<News>();
+  /**
+   * Fetch the link to the latest N news item
+   * 
+   * @param n
+   * @return
+   * @throws InterruptedException
+   * @throws ExecutionException
+   */
+  public static List<String> getNewsURLs(int n) throws InterruptedException, ExecutionException {
+    List<String> news = new ArrayList<String>();
 
     String source = Web.get(NewsURL);
     if (source.length() != 0) {
       Document doc = Jsoup.parse(source);
 
       Elements urls = doc.getElementsByClass("wrap");
-      for (int i = 0; i < urls.size() && i < limit; i++) {
+      for (int i = 0; i < urls.size() && i < n; i++) {
         String url = urls.get(i).getElementsByTag("a").get(0).attr("href");
-        news.add(getNews(ArchURL + url));
+        news.add(ArchURL + url);
       }
     }
 
@@ -126,7 +134,7 @@ public class ArchWeb {
   }
 
   /**
-   * Fetch the news item and convert it to some sort of plain text
+   * Fetch the news item
    * 
    * @param url
    *          the news to fetch

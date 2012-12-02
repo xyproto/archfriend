@@ -153,10 +153,10 @@ public class ArchFriendActivity extends Activity {
     TextView tvNews = (TextView)findViewById(R.id.txtArchNews);
 
     // Get the latest news
-    List<News> news = ArchWeb.getNews(1);
+    List<String> urls = ArchWeb.getNewsURLs(1);
 
-    if (news.size() != 0) {
-      News n = news.get(0);
+    if (urls.size() != 0) {
+      News n = ArchWeb.getNews(urls.get(0));
 
       String outputText = getString(R.string.latest_news) + "\n\n";
       outputText += n.getDate() + " - " + n.getTitle() + "\n\n";
