@@ -27,8 +27,11 @@
 
 package com.xyproto.archfriend;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -141,8 +144,9 @@ public class ArchWeb {
    * @return The latest news item as a string
    * @throws InterruptedException
    * @throws ExecutionException
+   * @throws ParseException
    */
-  public static News getNews(String url) throws InterruptedException, ExecutionException {
+  public static News getNews(String url) throws InterruptedException, ExecutionException, ParseException {
     News news = null;
 
     String source = Web.get(url);
@@ -163,7 +167,9 @@ public class ArchWeb {
       news.setText(text);
       news.setTitle(title);
       news.setAuthor(author);
-      news.setDate(date);
+      SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+      long timestamp = yyyyMMdd.parse(date).getTime();
+      news.setDate(timestamp);
       news.setUrl(url);
 
       // TODO: Collect URLs and have choice in the menu named 'Launch URLs' that

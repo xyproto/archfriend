@@ -27,6 +27,9 @@
 
 package com.xyproto.archfriend;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import android.app.Activity;
@@ -38,6 +41,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import com.xyproto.archfriend.db.NewsDataSource;
 import com.xyproto.archfriend.model.Maintainer;
 import com.xyproto.archfriend.model.News;
 import com.xyproto.archfriend.model.Package;
@@ -47,11 +51,16 @@ public class ArchFriendActivity extends Activity {
 
   private boolean spinnerCanChangeStuffYet;
 
+  private NewsDataSource datasource;
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     spinnerCanChangeStuffYet = false;
     setContentView(R.layout.splash);
+
+    datasource = new NewsDataSource(this);
+    datasource.open();
   }
 
   @Override
@@ -70,12 +79,21 @@ public class ArchFriendActivity extends Activity {
           e.printStackTrace();
         } catch (ExecutionException e) {
           e.printStackTrace();
+        } catch (ParseException e) {
+          e.printStackTrace();
         }
 
         TextView tv = (TextView)findViewById(R.id.txtArchNews);
         tv.setMovementMethod(new ScrollingMovementMethod());
       }
     }, 700);
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+
+    datasource.close();
   }
 
   private void populateSpinner() throws InterruptedException, ExecutionException {
@@ -149,19 +167,29 @@ public class ArchFriendActivity extends Activity {
     }
   }
 
-  private void populateNews() throws InterruptedException, ExecutionException {
+  private void populateNews() throws InterruptedException, ExecutionException, ParseException {
     TextView tvNews = (TextView)findViewById(R.id.txtArchNews);
 
     // Get the latest news
     List<String> urls = ArchWeb.getNewsURLs(1);
 
     if (urls.size() != 0) {
-      News n = ArchWeb.getNews(urls.get(0));
+      String latestNewsUrl = urls.get(0);
+      News news;
+
+      News latestNewsDB = datasource.getLatestNews();
+      if (latestNewsDB != null && latestNewsDB.getUrl().equals(latestNewsUrl)) {
+        news = latestNewsDB;
+      } else {
+        news = ArchWeb.getNews(latestNewsUrl);
+        datasource.createNews(news);
+      }
 
       String outputText = getString(R.string.latest_news) + "\n\n";
-      outputText += n.getDate() + " - " + n.getTitle() + "\n\n";
-      outputText += n.getText() + "\n\n";
-      outputText += "by " + n.getAuthor();
+      Date date = new Date(news.getDate());
+      outputText += DateFormat.getDateInstance().format(date) + " - " + news.getTitle() + "\n\n";
+      outputText += news.getText() + "\n\n";
+      outputText += "by " + news.getAuthor();
       tvNews.setText(outputText);
     } else
       tvNews.setText(R.string.no_data);
@@ -169,7 +197,7 @@ public class ArchFriendActivity extends Activity {
     scrollHome();
   }
 
-  public void btnNews_clicked(View view) throws InterruptedException, ExecutionException {
+  public void btnNews_clicked(View view) throws InterruptedException, ExecutionException, ParseException {
     populateNews();
   }
 

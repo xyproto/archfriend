@@ -8,7 +8,7 @@ public class News {
   private String title;
   private String author;
   private String url;
-  private String date;
+  private long date;
 
   public Long getId() {
     return id;
@@ -50,11 +50,11 @@ public class News {
     this.url = url;
   }
 
-  public String getDate() {
+  public long getDate() {
     return date;
   }
 
-  public void setDate(String date) {
+  public void setDate(long date) {
     this.date = date;
   }
 
