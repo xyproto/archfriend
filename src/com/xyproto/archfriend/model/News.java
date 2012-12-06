@@ -1,6 +1,10 @@
 
 package com.xyproto.archfriend.model;
 
+import java.text.DateFormat;
+import java.util.Date;
+
+
 public class News {
 
   private Long id;
@@ -61,6 +65,15 @@ public class News {
   @Override
   public String toString() {
     return id + ") " + text;
+  }
+
+  public String formatArticle(String title) {
+    Date date = new Date(getDate());
+    String text = title + "\n\n";
+    text += DateFormat.getDateInstance().format(date) + " - " + getTitle() + "\n\n";
+    text += getText() + "\n\n";
+    // text += "by " + getAuthor();
+    return text;
   }
 
 }

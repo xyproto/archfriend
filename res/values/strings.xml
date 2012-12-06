@@ -4,7 +4,7 @@
     <string name="app_name">ArchFriend</string>
     <string name="news">News</string>
     <string name="no_data">Received no data from web</string>
-    <string name="zero">zero</string>
+    <string name="zero">no</string>
     <string name="flagged_ood">has %1$s packages that are flagged out of date.</string>
     <string name="only_one">has only one package that is flagged out of date.</string>
     <string name="latest_news">Latest news:</string>

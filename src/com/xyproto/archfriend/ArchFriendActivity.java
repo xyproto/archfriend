@@ -27,9 +27,7 @@
 
 package com.xyproto.archfriend;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import android.app.Activity;
@@ -185,11 +183,7 @@ public class ArchFriendActivity extends Activity {
         datasource.createNews(news);
       }
 
-      String outputText = getString(R.string.latest_news) + "\n\n";
-      Date date = new Date(news.getDate());
-      outputText += DateFormat.getDateInstance().format(date) + " - " + news.getTitle() + "\n\n";
-      outputText += news.getText() + "\n\n";
-      outputText += "by " + news.getAuthor();
+      String outputText = news.formatArticle(getString(R.string.latest_news));
       tvNews.setText(outputText);
     } else
       tvNews.setText(R.string.no_data);

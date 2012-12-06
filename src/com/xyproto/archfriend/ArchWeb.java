@@ -136,6 +136,41 @@ public class ArchWeb {
     return news;
   }
 
+  private static String oldSchoolTextFormatting(Element element) {
+    final String[] replacements = new String[] {
+        "\n-> ", "&lt;-><", "&gt;->>", "<p>->", "</p>->\n\n", "<b>->*** ", "</b>-> ***", "<code>->\"", "</code>->\"", "</a>->",
+        "<li>->* ", "</li>->\n", "<ol>->", "</ol>->\n", "<ul>->", "</ul>->\n", "<i>->_", "</i>->_" };
+    final String aStart = "<a href=", aEnd = "\">";
+    String text, part1, part2;
+    int pos1, pos2;
+
+    text = element.html();
+    if (text.length() > 0) {
+      // Remove links (but keep the text)
+      while (text.indexOf(aStart) != -1) {
+        pos1 = text.indexOf(aStart);
+        pos2 = text.indexOf(aEnd, pos1 + 1);
+        part1 = text.substring(0, pos1 - 1);
+        part2 = text.substring(pos2 + aEnd.length(), text.length());
+        text = part1 + part2;
+      }
+      // Perform various replacements
+      for (String replacement : replacements) {
+        String[] fields = replacement.split("->", 1);
+        text = text.replaceAll(fields[0], fields[1]);
+      }
+      // Remove double spaces
+      while (text.indexOf("  ") != -1) {
+        text = text.replaceAll("  ", " ");
+      }
+      // Remove leading spaces
+      text = text.replaceAll("\n ", "\n");
+      // Final trim
+      text = text.trim();
+    }
+    return text;
+  }
+
   /**
    * Fetch the news item
    * 
@@ -155,7 +190,7 @@ public class ArchWeb {
 
       // Get the relevant block of html text
       Element content = doc.getElementsByClass("article-content").get(0);
-      String text = content.text();
+      String text = oldSchoolTextFormatting(content);
 
       String title = doc.getElementsByTag("h2").get(0).text();
 
@@ -171,10 +206,6 @@ public class ArchWeb {
       long timestamp = yyyyMMdd.parse(date).getTime();
       news.setDate(timestamp);
       news.setUrl(url);
-
-      // TODO: Collect URLs and have choice in the menu named 'Launch URLs' that
-      // opens up a list of all URLs mentioned in the new text, that can be
-      // opened.
     }
 
     return news;
