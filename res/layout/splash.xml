@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/beautiful_corner_tl" />
+        android:src="@drawable/corner_ul" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/beautiful_corner_tr" />
+        android:src="@drawable/corner_ur" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:src="@drawable/beautiful_corner_bl" />
+        android:src="@drawable/corner_ll" />
 
     <ImageView
         android:id="@+id/imageView4"
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:src="@drawable/beautiful_corner_br" />
+        android:src="@drawable/corner_lr" />
 
     <ImageView
         android:id="@+id/imageView5"
@@ -45,15 +45,15 @@
         android:layout_below="@+id/imageView1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:src="@drawable/archfriend_logo2012" />
+        android:src="@drawable/archfriend_logo2013" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/imageView3"
+        android:layout_above="@+id/imageView4"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="62dp"
         android:text="@string/app_name"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#000000"
