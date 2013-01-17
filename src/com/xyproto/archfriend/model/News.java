@@ -69,10 +69,9 @@ public class News {
 
   public String formatArticle(String title) {
     Date date = new Date(getDate());
-    String text = title + "\n\n";
-    text += DateFormat.getDateInstance().format(date) + " - " + getTitle() + "\n\n";
-    text += getText() + "\n\n";
-    // text += "by " + getAuthor();
+    String text = title + ", by " + getAuthor() + ",\n";
+    text += DateFormat.getDateInstance().format(date) + "\n\n:";
+    text += getTitle() + "\n\n" + getText() + "\n\n";
     return text;
   }
 

@@ -64,7 +64,8 @@ public class ArchFriendActivity extends Activity {
   @Override
   public void onStart() {
     super.onStart();
-    // Wait 0.7 sec then close splash screen (replace view context)
+    // Wait 0.9 sec then close splash screen (replace view context)
+    // TODO: Start loading the list of names
     Handler handler = new Handler();
     handler.postDelayed(new Runnable() {
       public void run() {
@@ -84,7 +85,21 @@ public class ArchFriendActivity extends Activity {
         TextView tv = (TextView)findViewById(R.id.txtArchNews);
         tv.setMovementMethod(new ScrollingMovementMethod());
       }
-    }, 700);
+    }, 900);
+    // TODO: Find the best way to load the data for the spinner in the
+    // background
+    // Handler handler2 = new Handler();
+    // handler2.postDelayed(new Runnable() {
+    // public void run() {
+    // try {
+    // populateSpinner();
+    // } catch (InterruptedException e) {
+    // e.printStackTrace();
+    // } catch (ExecutionException e) {
+    // e.printStackTrace();
+    // }
+    // }
+    // }, 900);
   }
 
   @Override
