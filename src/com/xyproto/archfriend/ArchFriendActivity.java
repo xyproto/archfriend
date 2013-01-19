@@ -31,8 +31,13 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.AdapterView;
@@ -48,8 +53,9 @@ import com.xyproto.archfriend.model.Package;
 public class ArchFriendActivity extends Activity {
 
   private boolean spinnerCanChangeStuffYet;
-
   private NewsDataSource datasource;
+  private Notification noti;
+  private static int notificationId = 256;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -207,6 +213,16 @@ public class ArchFriendActivity extends Activity {
   }
 
   public void btnNews_clicked(View view) throws InterruptedException, ExecutionException, ParseException {
+    NotificationCompat.Builder nb = new NotificationCompat.Builder(this);
+    nb.setContentTitle("Waaaaoooaaaaa!");
+    nb.setContentText("OJOJOJOJOJOJ!");
+    nb.setSmallIcon(R.drawable.archfriend_tiny_bw_logo2013);
+    nb.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+    // nb.setLargeIcon(bitmap);
+    noti = nb.build();
+
+    NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+    notificationManager.notify(notificationId, noti);
     populateNews();
   }
 
