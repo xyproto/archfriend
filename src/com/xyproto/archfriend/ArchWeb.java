@@ -100,12 +100,12 @@ public class ArchWeb {
 
       // Pick out the usernames of the maintainers from the block of html
       String username;
-      for (int i = 0; i < options.size(); i++) {
-        username = options.get(i).val();
-        if (!username.equals("orphan")) {
-          maintainers.add(new Maintainer(username, options.get(i).text()));
+        for (Element option : options) {
+            username = option.val();
+            if (!username.equals("orphan")) {
+                maintainers.add(new Maintainer(username, option.text()));
+            }
         }
-      }
     }
 
     return maintainers;
@@ -147,7 +147,7 @@ public class ArchWeb {
     text = element.html();
     if (text.length() > 0) {
       // Remove links (but keep the text)
-      while (text.indexOf(aStart) != -1) {
+      while (text.contains(aStart)) {
         pos1 = text.indexOf(aStart);
         pos2 = text.indexOf(aEnd, pos1 + 1);
         part1 = text.substring(0, pos1 - 1);
@@ -160,7 +160,7 @@ public class ArchWeb {
         text = text.replaceAll(fields[0], fields[1]);
       }
       // Remove double spaces
-      while (text.indexOf("  ") != -1) {
+      while (text.contains("  ")) {
         text = text.replaceAll("  ", " ");
       }
       // Remove leading spaces

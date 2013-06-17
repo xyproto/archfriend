@@ -54,8 +54,7 @@ public class ArchFriendActivity extends Activity {
 
   private boolean spinnerCanChangeStuffYet;
   private NewsDataSource datasource;
-  private Notification noti;
-  private static int notificationId = 256;
+  private final static int NOTIFICATION_ID = 256;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -143,7 +142,7 @@ public class ArchFriendActivity extends Activity {
               outputText += " " + getString(R.string.only_one);
               outputText += "\n\n" + packages.get(0);
             } else {
-              outputText += " " + String.format(getString(R.string.flagged_ood), Integer.valueOf(packages.size()));
+              outputText += " " + String.format(getString(R.string.flagged_ood), packages.size());
               outputText += "\n\n";
               for (Package pkg : packages) {
                 outputText += pkg + "\n";
@@ -219,10 +218,10 @@ public class ArchFriendActivity extends Activity {
     nb.setSmallIcon(R.drawable.archfriend_tiny_bw_logo2013);
     nb.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
     // nb.setLargeIcon(bitmap);
-    noti = nb.build();
+    Notification noti = nb.build();
 
     NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-    notificationManager.notify(notificationId, noti);
+    notificationManager.notify(NOTIFICATION_ID, noti);
     populateNews();
   }
 

@@ -33,7 +33,6 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -128,7 +127,7 @@ class HTTPTask extends AsyncTask<String, Void, String> {
     HttpClient mClient = getNewHttpClient();
     mReader = null;
 
-    StringBuffer mBuffer = new StringBuffer(bufsize);
+    StringBuilder mBuffer = new StringBuilder(bufsize);
     String mNewLine = System.getProperty("line.separator");
 
     mBuffer.setLength(0);
@@ -139,7 +138,7 @@ class HTTPTask extends AsyncTask<String, Void, String> {
 
       mReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"), bufsize);
 
-      String line = "";
+      String line;
       while ((line = mReader.readLine()) != null) {
         mBuffer.append(line);
         mBuffer.append(mNewLine);
@@ -183,7 +182,7 @@ class HTTPTask extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
+    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException {
       return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
     }
 
