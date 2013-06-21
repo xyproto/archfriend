@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relativeLayout1"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#fafafa"
-    android:gravity="fill_horizontal" >
+                android:id="@+id/relativeLayout1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="#fafafa"
+                android:gravity="fill_horizontal">
 
     <RelativeLayout
-        android:id="@+id/relativeLayout2"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" >
+            android:id="@+id/relativeLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true">
 
         <Button
-            android:id="@+id/btnNews"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:onClick="btnNews_clicked"
-            android:text="@string/news" >
+                android:id="@+id/btnNews"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:onClick="btnNews_clicked"
+                android:text="@string/news">
         </Button>
 
         <Spinner
-            android:id="@+id/lstMaintainers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/btnNews" />
+                android:id="@+id/lstMaintainers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/btnNews"/>
 
         <TextView
-            android:id="@+id/tvNoData"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/btnNews"
-            android:text="@string/no_data"
-            android:visibility="invisible" />
+                android:id="@+id/tvNoData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/btnNews"
+                android:text="@string/no_data"
+                android:visibility="invisible"/>
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/txtArchNews"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/relativeLayout2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:maxLines="2048"
-        android:padding="10dp"
-        android:scrollbars="vertical"
-        android:textColor="#050505"
-        android:textColorHint="#050505"
-        android:textSize="14sp"
-        android:typeface="serif" />
+            android:id="@+id/txtArchNews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/relativeLayout2"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:maxLines="2048"
+            android:padding="10dp"
+            android:scrollbars="vertical"
+            android:textColor="#050505"
+            android:textColorHint="#050505"
+            android:textSize="14sp"
+            android:typeface="serif"/>
 
 </RelativeLayout>
