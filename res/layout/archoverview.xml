@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#fafafa"
-    android:gravity="fill_horizontal" >
+    android:gravity="fill_horizontal">
 
     <RelativeLayout
         android:id="@+id/relativeLayout2"
@@ -12,7 +12,7 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" >
+        android:layout_alignParentRight="true">
 
         <Button
             android:id="@+id/btnNews"
@@ -21,8 +21,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:onClick="btnNews_clicked"
-            android:text="@string/news" >
-        </Button>
+            android:text="@string/news"></Button>
 
         <Spinner
             android:id="@+id/lstMaintainers"
